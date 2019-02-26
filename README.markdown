@@ -17,6 +17,16 @@ supported, but mutable references, arrays, or I/O operations are not
 yet supported.  The runtime system is single-threaded and no
 concurrency primitives are supported.
 
+## Building with stack
+
+```bash
+stack setup
+
+./build-setup.sh
+
+stack build
+```
+
 ## Building
 
 You need:
