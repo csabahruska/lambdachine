@@ -48,7 +48,7 @@ data EvalContext
 
 type Stack = [EvalContext]
 
-eval :: LocalEnv -> Heap -> Stack -> Term 
+eval :: LocalEnv -> Heap -> Stack -> Term
      -> Maybe (LocalEnv, Heap, Stack, Term)
 eval lcl hp st term_ = case viewTerm term_ of
   -- These cases don't cover a free variable or a (reference to a)
@@ -84,7 +84,7 @@ eval lcl hp st term_ = case viewTerm term_ of
   LetRec rs term ->
     alloc hp (map fst rs) lcl $ \hp' lcl' ->
       let
-        hp'' = storeTerms hp' lcl' rs 
+        hp'' = storeTerms hp' lcl' rs
       in
         Just (lcl', hp'', st, term)
   Case e v alts ->
@@ -93,13 +93,13 @@ eval lcl hp st term_ = case viewTerm term_ of
     Just (lcl, hp, st, prim_op op (map (lookupAtom lcl) args))
   _ -> Nothing
 
-match_alt :: HeapObj -> [Alt] -> LocalEnv -> Heap -> Stack 
+match_alt :: HeapObj -> [Alt] -> LocalEnv -> Heap -> Stack
           -> Maybe (LocalEnv, Heap, Stack, Term)
 match_alt (Constr dcon vals) alts lcl hp st = go alts
  where
    go [] = Nothing
    go [(DEFAULT, e)] = Just (lcl, hp, st, e)
-   go ((DataAlt dcon' vars, e):alts') 
+   go ((DataAlt dcon' vars, e):alts')
      | dcon == dcon' =
        Just (lcl // zip vars vals, hp, st, e)
      | otherwise = go alts'
@@ -116,7 +116,7 @@ match_alt_lit lit alts lcl hp st = go alts
     | l' == lit = Just (lcl, hp, st, e)
     | otherwise = go alts'
    go as = error $ "match_alt_lit: " ++ pretty (lit, alts)
-                   
+
 prim_op :: PrimOp -> [RegVal] -> Term
 prim_op op [UInt x, UInt y] =
   Atom $ Lit $
@@ -143,7 +143,7 @@ apply faddr args lcl hp st
   | Pap faddr' args1 <- fetch hp faddr
   = apply faddr' (args1 ++ args) lcl hp st
 
-(//) :: LocalEnv -> [(Var, RegVal)] -> LocalEnv  
+(//) :: LocalEnv -> [(Var, RegVal)] -> LocalEnv
 (LocalEnv lcl s) // ms = LocalEnv (M.fromList ms `M.union` lcl) s
 
 newHeap :: IO Heap
@@ -165,8 +165,8 @@ traceEval term = do
        Just (lcl', hp', st', t') ->
          --pprint t' >>
          go lcl' hp' st' t'
-  
-    
+
+
 fetch :: Heap -> Addr -> HeapObj
 fetch (Heap m _) a = m M.! a
 
@@ -175,7 +175,7 @@ store (Heap m s) a v = Heap (M.insert a v m) s
 
 substArgs :: LocalEnv -> [Var] -> [Atom] -> LocalEnv -> LocalEnv
 substArgs lcl [] [] !lcl' = lcl'
-substArgs lcl (v:vs) (Lit l : as) !lcl' = 
+substArgs lcl (v:vs) (Lit l : as) !lcl' =
   substArgs lcl vs as (extendEnv lcl' v (UInt l))
 substArgs lcl (v:vs) (Var v' : as) !lcl' =
   substArgs lcl vs as $
@@ -243,10 +243,10 @@ storeTerms h lcl mappings = go mappings h
                Func [] body lcl
      in go ms h'
 
- 
+
 instance Pretty Addr where
   ppr (Addr i) = char '#' <> int i
-  
+
 instance Pretty RegVal where
   ppr (UInt l) = ppr l
   ppr (Ptr p) = ppr p
@@ -255,7 +255,7 @@ instance Pretty Heap where
   ppr (Heap m _) = char '<' <> text "heap" <+> ppr m <> char '>'
 instance Pretty LocalEnv where
   ppr (LocalEnv m _) = char '<' <> text "env" <+> ppr m <> char '>'
-  
+
 instance Pretty HeapObj where
   ppr (Constr dcon vals) =
     text "CON" <> parens (text dcon <+> hsep (map ppr vals))
@@ -273,7 +273,7 @@ instance Pretty EvalContext where
     text "case * of" <+> hsep (map (ppr . fst) alts) <+> ppr env
   ppr (AppC vals) =
     text "*" <+> hsep (map ppr vals)
-    
+
 
 tst1 = LetRec [(a, Con "I#" [Lit 42])] (var a)
   where
@@ -283,7 +283,7 @@ tst1 = LetRec [(a, Con "I#" [Lit 42])] (var a)
 addLabels :: Supply Int -> Term -> Term
 addLabels = add_labels True
  where
-   add_labels br s term = case term of 
+   add_labels br s term = case term of
      Atom (Var _) -> Pos (supplyValue s) term
      App v as -> Pos (supplyValue s) term
      POp o as -> term
@@ -304,7 +304,7 @@ addLabels = add_labels True
    add_labels_alts s ((alt, term):alts) =
      case split2 s of
        (s1, s2) -> (alt, addLabels s1 term) : add_labels_alts s2 alts
-  
+
    add_labels_binds _ [] = []
    add_labels_binds s ((v, Fun fvs ps t):binds) =
      case split2 s of
@@ -315,8 +315,8 @@ addLabels = add_labels True
        (s1, s2) -> (v, Thunk fvs (addLabels s1 t)) :
                    add_labels_binds s2 binds
    add_labels_binds s (b:binds) = b : add_labels_binds s binds
-    
-tst2 = 
+
+tst2 =
   LetRec [(plusInt, Fun [] [a,b] $
            Case (var a) u $
            [(DataAlt "I#" [a],
@@ -336,7 +336,7 @@ tst2 =
          ,(two, Con "I#" [Lit 2])] $
        App plusInt [Var one, Var two]
  where
-   [sum,l,zero,one,two,x,xs,s,plusInt,a,b,r,u] 
+   [sum,l,zero,one,two,x,xs,s,plusInt,a,b,r,u]
      = map name ["sum","l","zero","one","two","x","xs","s",
                  "plusInt","a","b","r","_"]
    nilDCon = "[]"
@@ -375,7 +375,7 @@ tst3 =
   let1 r (App sum [Var two]) $ App r [Var zero] --, Var zero]
 
  where
-   [sum,dec,l,zero,one,two,x,x',y,xs,s,plusInt,a,b,r,u] 
+   [sum,dec,l,zero,one,two,x,x',y,xs,s,plusInt,a,b,r,u]
      = map name ["sum","dec","l","zero","one","two","x","x'","y","xs","s",
                  "plusInt","a","b","r","_"]
 
@@ -404,7 +404,7 @@ tst4 =
      = map name ["f", "f1", "_", "b", "b'", "b''", "r"
                 ,"map", "l", "x", "xs", "y", "ys"] :: [Var]
    num_list :: String -> [Int] -> Term
-   num_list n list = 
+   num_list n list =
       LetRec (go 0 [] list) $ var (name (n ++ ":0"))
     where
       go _ acc [] = acc
@@ -418,16 +418,16 @@ tst4 =
         go (c+1) ((lit_name, Con "I#" [Lit l]) :
                   (cons_name, Con ":" [Var lit_name, Var next_name]) :
                   acc) ls
-   
+
 
 tr_eval t = do
   s <- newNumSupply
   let e = addLabels s t
   pprint e
   traceEval e
-                
+
 {-
-eval :: Expr Id -> LocalEnv -> Stack -> Heap 
+eval :: Expr Id -> LocalEnv -> Stack -> Heap
      -> Maybe (Expr Id, Stack, Heap)
 eval (Lit l) lcl (CaseCont alts : s) h =
   Just (select_alt (LitVal l) alts, s, h)  -- RET+CASECON

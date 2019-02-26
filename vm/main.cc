@@ -199,7 +199,7 @@ printBasicStats(FILE *out, Capability *cap,
           record_abort_reasons[AR_KNOWN_TO_FAIL_GUARD],
           record_abort_reasons[AR_INTERPRETER_REQUEST],
           record_abort_reasons[AR_NYI]);
-  
+
   fprintf(out,
           "  Interpreter->MCode Switches         %" FMT_Word64
           " (%5.1f per MUT second)\n\n",

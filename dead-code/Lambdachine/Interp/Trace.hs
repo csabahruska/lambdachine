@@ -104,7 +104,7 @@ update_escapees rs snap = do
   when (rs_loop_ins rs0 /= 0) $ do
     let escs = [ ref | ref <- IM.elems (snap_slots snap)
                      , isHeapRef ref ]
-    writeIORef rs $ 
+    writeIORef rs $
       rs0{ rs_escapees = foldr S.insert (rs_escapees rs0) escs }
 
 -- | Append the IR instruction to the trace and run the optimisation
@@ -154,7 +154,7 @@ record_alloc rs_ref itbl size = do
   let ref = THp iref
   modifyIORef rs_ref $ \rs ->
     rs{ rs_virtual_objects =
-          IM.insert (refToInt ref) (size, IM.singleton 0 itbl) 
+          IM.insert (refToInt ref) (size, IM.singleton 0 itbl)
               (rs_virtual_objects rs) }
   return ref
 
@@ -566,7 +566,7 @@ record_eval env heap args itbl pc reg rs liveouts = do
 -- the instructions, but re-'emit' the instructions through the
 -- regular optimisation pipeline, thus redundant instructions are removed
 -- automatically.
--- 
+--
 -- We separate the two copies of the loop body via the @LOOP@ marker.
 -- When control flow reaches the end of the trace execution continues
 -- after the @LOOP@ marker, not at the beginning of the trace.  The
@@ -589,7 +589,7 @@ unrollLoop rs_ref env heap = do
      ins <- readArray instrs i
      case ins of
        Loop -> do
-         --pprint $ text "PHIs =" <+> ppr phis 
+         --pprint $ text "PHIs =" <+> ppr phis
          --        $+$ text "Subst =" <+> ppr renaming
          insert_phis rs_ref renaming phis
          return ()
@@ -613,13 +613,13 @@ unrollLoop rs_ref env heap = do
 
          new_next <- rs_next <$> readIORef rs_ref
          let folded = new_next == old_next
-         
+
          -- In some cases the inserted object may be different from
          -- `ins'` (e.g., a different snapshot), so let's re-read the
          -- object.
          ins'' <- if folded then return ins' else
                      readArray instrs old_next
-         
+
          let phis'
                | folded = phis -- The instruction has been folded
                | otherwise =
@@ -642,7 +642,7 @@ unrollLoop rs_ref env heap = do
     where
       renameRef r = fromMaybe r (M.lookup r renaming)
 
-   calc_phis :: RecordState -> M.Map TRef TRef -> S.Set TRef 
+   calc_phis :: RecordState -> M.Map TRef TRef -> S.Set TRef
              -> [IRIns]
    calc_phis rs renaming phis =
      map (\(phi,phi') -> Phi phi phi') $
@@ -650,7 +650,7 @@ unrollLoop rs_ref env heap = do
      [ (phi, phi') |
        phi0 <- S.toList phis,
        let Just phi0' = M.lookup phi0 renaming,
-       (phi, phi') 
+       (phi, phi')
          <- case (,) <$> IM.lookup (refToInt phi0) (rs_virtual_objects rs)
                      <*> IM.lookup (refToInt phi0') (rs_virtual_objects rs) of
               Nothing -> [(phi0, phi0')]
@@ -658,7 +658,7 @@ unrollLoop rs_ref env heap = do
                 --Tr.trace ("MUA " ++ pretty (fields1, fields2)) $
                 (phi0, phi0') : zip (IM.elems fields1) (IM.elems fields2),
        phi /= phi', not (isConstTRef phi), not (isConstTRef phi') ]
-   
+
    insert_phis :: IORef RecordState -> M.Map TRef TRef -> S.Set TRef
                -> IO ()
    insert_phis rs renaming phis = do
@@ -666,16 +666,16 @@ unrollLoop rs_ref env heap = do
      mapM_ (emitRaw rs) $ calc_phis rs0 renaming phis
 {-   forM_ (S.toList phis) $ \phi ->
        case M.lookup phi renaming of
-         Just phi' 
+         Just phi'
            | phi /= phi' -> do
              emitRaw rs (Phi phi phi')
              rs0 <- readIORef rs
              case (,) <$> M.lookup phi (rs_virtual_objects rs0)
                       <*> M.lookup phi' (rs_virtual_objects rs0) of
                Just ((sz1,fields1), (sz2,fields2)) ->
-                 
+
                  return ()
-               _ -> 
+               _ ->
                  return ()
            | otherwise -> return ()
 -}
@@ -697,7 +697,7 @@ sinkAllocs rs_ref = do
         writeArray (rs_trace rs) i (Guard cmp opA opB snap')
       _ -> return ()
   -- Update escapees to only include unsinkables.
-  writeIORef rs_ref 
+  writeIORef rs_ref
     rs{ rs_escapees = S.filter (not . isSinkable esc cyc) (rs_escapees rs) }
  where
    upd_snapshot esc cyc snap@Snapshot{} =
@@ -709,7 +709,7 @@ sinkAllocs rs_ref = do
            | r `S.member` acc = sink acc rs
            | otherwise =
              let Just (_,fields) = M.lookup r (snap_heap snap) in
-             sink (S.insert r acc) 
+             sink (S.insert r acc)
                 ([ r' | r' <- IM.elems fields, isHeapRef r',
                         isSinkable esc cyc r' ] ++ rs)
      in snap{ snap_allocs = sink S.empty sinkees0 }
@@ -721,10 +721,10 @@ sinkAllocs rs_ref = do
 --
 --   - Any sunken allocation is definitely dead.  If it is sunken on
 --     one guard it must be sunken on /all/ guards.
---     
+--
 --   - If the allocation escapes and cannot be sunken, then the
 --     allocation instruction cannot be dead.
--- 
+--
 -- Therefore, we mark all allocation nodes reachable from the escapees.
 -- Any other allocations are dead code (and so are their stores).
 --
@@ -741,9 +741,9 @@ elimDeadCode rs_ref = do
   mapTraceIRs rs $ \r ir ->
     case ir of
       AllocN _ _
-       | not (the_id r `IS.member` reachable_from_escapes) 
+       | not (the_id r `IS.member` reachable_from_escapes)
        -> Nop
-      FStore r' _ _ 
+      FStore r' _ _
        | not (the_id r' `IS.member` reachable_from_escapes)
        -> Nop
       Phi r1 r2
@@ -764,7 +764,7 @@ buildTrace rs_ref = do
   -- TODO: Remove unnecessary instructions (e.g., Nop).  Need to
   -- rename variables for this, though.
 
-  (_, exits) 
+  (_, exits)
     <- foldTraceIRs rs (1, mempty) $ \ref ir s@(n, exits) -> do
          case ir of
            Guard _ _ _ _ ->
@@ -881,14 +881,14 @@ finaliseTrace rs_ref env heap = do
 --  pprint =<< ppRecordState True =<< readIORef rs_ref
 
 isLoopInvariant :: RecordState -> TRef -> Bool
-isLoopInvariant rs ref = 
+isLoopInvariant rs ref =
   isConstTRef ref ||
   ref == nilTRef ||
   (refToInt ref < rs_loop_ins rs &&
   (case IM.lookup (refToInt ref) $ fst $ rs_phis rs of
      Nothing -> True
      Just ref' -> isLoopInvariant rs ref'))
-  
+
 phiTwin :: RecordState -> TRef -> Maybe TRef
 phiTwin rs ref =
   IM.lookup refi ltr `mplus` IM.lookup refi rtl
@@ -913,14 +913,14 @@ phiTwin rs ref =
 isSinkable :: EscapeGraph -> IS.IntSet -> TRef -> Bool
 isSinkable _esc _cycles ref | not (isHeapRef ref) = True
 isSinkable (_,the_id) cycles ref = not (the_id ref `IS.member` cycles)
-{-  
-  the_id 
+{-
+  the_id
   case IM.lookup (refToInt ref) (rs_virtual_objects rs) of
     Just (_sz, fields) ->
       and [ field_ok f {- && maybe True field_ok (phiTwin rs f) -}
               | f <- IM.elems fields ]
  where
-   field_ok ref' = 
+   field_ok ref' =
      not (isHeapRef ref') || isLoopInvariant rs ref' || isSinkable rs esc ref'
 -}
 -- | Computes the set of nodes that are contained in cycles.  This
@@ -958,7 +958,7 @@ foldTraceIRs rs a0 f = go 1 a0
     let Just r = IM.lookup i (rs_ins_to_ref rs)
     a' <- f r ins a
     go (i + 1) a'
-  
+
 
 ppGraph :: Graph -> PDoc
 ppGraph g =
@@ -1000,7 +1000,7 @@ mkEscapeGraph rs roots =
    the_id ref =
      let !n = refToInt ref in
      if n > 0 then node_ids ! n else n
-   
+
    coll [] _seen acc = acc []
    coll (ref:refs) !seen acc0
     | ref `S.member` seen = coll refs seen acc0
@@ -1009,7 +1009,7 @@ mkEscapeGraph rs roots =
       -- E.g., given node x with children x1 and x2, node y with children
       -- y1 and y2 and PHI(x,y) the graph will only contain nodes x, x1, x2.
       -- We will have `the_id x == the_id y`.
-      let 
+      let
         iref = the_id ref
         children' = maybe [] (filter ((> 0) . the_id) . IM.elems . snd) $
                      IM.lookup iref (rs_virtual_objects rs)
@@ -1017,7 +1017,7 @@ mkEscapeGraph rs roots =
       in
         coll (children' ++ refs) (S.insert ref seen)
               ((edges'++) . acc0)
-    
+
 
 --filter_fold ::
 

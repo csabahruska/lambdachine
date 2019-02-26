@@ -56,10 +56,10 @@ typedef struct {
   u2   framesize;               /* No. of local variables. */
   u2   arity;                   /* No. of function arguments.  */
   u2   sizecode;                /* No. of instructions in bytecode. */
-  u2   sizelits;		/* No. of literals */
+  u2   sizelits;                /* No. of literals */
   u2   sizebitmaps;             /* No. of bitmaps (in multiples of `u2') */
   /* INVARIANT: framesize >= arity */
-  Word  *lits;			/* Literals */
+  Word  *lits;                  /* Literals */
   u1    *littypes;              /* Types of literals.  See LitType. */
   BCIns *code;                  /* The bytecode followed by bitsets. */
   /* INVARIANT: code != NULL */
@@ -104,7 +104,7 @@ typedef struct _IndClosure {
   Closure      *indirectee;
 } IndClosure;
 
-/*  
+/*
 inline InfoTable *getInfo(Closure *cl) { return cl->header.info; }
 */
 #define getInfo(cl)    (cast(Closure*,cl)->header.info)
@@ -112,11 +112,11 @@ inline InfoTable *getInfo(Closure *cl) { return cl->header.info; }
 
 #define getTag(cl)    (getInfo(cl)->tagOrBitmap)
 
-/* 
+/*
 
 Info Tables
 -----------
- 
+
 */
 
 typedef union {

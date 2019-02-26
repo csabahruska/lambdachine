@@ -51,7 +51,7 @@ struct _VMState {
 extern BciFunction vm_exit;
 
 typedef struct _StgHeader {
-  
+
 } StgHeader;
 
 GblState* init_vm();

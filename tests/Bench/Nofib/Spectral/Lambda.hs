@@ -43,15 +43,15 @@ main = do { mainSimple ; mainMonad }
 
 mainSimple =
     do  args <- getArgs
-	if null args
-	   then putStrLn "Args: number-to-sum-up-to"
-	   else putStrLn (show (simpleEval [] (App sum0 (Con (read(head args))))))
+        if null args
+           then putStrLn "Args: number-to-sum-up-to"
+           else putStrLn (show (simpleEval [] (App sum0 (Con (read(head args))))))
 
 mainMonad =
     do  args <- getArgs
-	if null args
-	   then putStrLn "Args: number-to-sum-up-to"
-	   else (ev (App sum0 (Con (read(head args))))) >> return ()
+        if null args
+           then putStrLn "Args: number-to-sum-up-to"
+           else (ev (App sum0 (Con (read(head args))))) >> return ()
 -}
 
 runSimple :: Int -> String
@@ -92,9 +92,9 @@ type Env = [(String,Term)]
 ev :: Term -> IO (Env,Term)
 ev t =
     do  let StateMonad2 m = traverseTerm t
-	let (env,t2) = m []
-	putStrLn (pp t2 ++ "  " ++ ppenv env)
-	return (env,t2)
+        let (env,t2) = m []
+        putStrLn (pp t2 ++ "  " ++ ppenv env)
+        return (env,t2)
 -}
 
 -----------------------------------------------------------------
@@ -123,21 +123,21 @@ instance Monad StateMonad2  where
     return a = StateMonad2 (\s -> (s,a))
     fail msg = StateMonad2 (\s -> (s,error' msg))
     (StateMonad2 g) >>= h =
-	StateMonad2 (\a -> (let (s,a1) = g a in
-			    (let StateMonad2 h' = h a1 in
-			     h' s)))
+        StateMonad2 (\a -> (let (s,a1) = g a in
+                            (let StateMonad2 h' = h a1 in
+                             h' s)))
 
 instance EvalEnvMonad StateMonad2 where
     incr = StateMonad2 (\s -> (s,()))
     traverseTerm = eval
     lookupVar v =
-	StateMonad2 (\env -> (env, lookup2 env))
-	where
-	lookup2 env = maybe (error' ("undefined var: " ++ v)) id (lookup v env)
+        StateMonad2 (\env -> (env, lookup2 env))
+        where
+        lookup2 env = maybe (error' ("undefined var: " ++ v)) id (lookup v env)
     currEnv =
-	StateMonad2 (\env -> (env,env))
+        StateMonad2 (\env -> (env,env))
     withEnv tmp (StateMonad2 m) =
-	StateMonad2 (\env -> let (_,t) = m tmp in (env,t))
+        StateMonad2 (\env -> let (_,t) = m tmp in (env,t))
 
 
 eval :: (EvalEnvMonad m) => Term -> m Term
@@ -147,32 +147,32 @@ eval (Var x)   =
        traverseTerm t
 eval (Add u v) =
     do {Con u' <- traverseTerm u;
-	Con v' <- traverseTerm v;
-	return (Con (u'+v'))}
+        Con v' <- traverseTerm v;
+        return (Con (u'+v'))}
 eval (Thunk t e) =
     withEnv e (traverseTerm t)
 eval f@(Lam x b) =
     do  env <- currEnv
-	return (Thunk f env)  -- return a closure!
+        return (Thunk f env)  -- return a closure!
 eval (App u v) =
     do {u' <- traverseTerm u;
-	-- call-by-name, so we do not evaluate the argument v
-	apply u' v
+        -- call-by-name, so we do not evaluate the argument v
+        apply u' v
        }
 eval (IfZero c a b) =
     do {val <- traverseTerm c;
-	if val == Con 0
-	   then traverseTerm a
-	   else traverseTerm b}
+        if val == Con 0
+           then traverseTerm a
+           else traverseTerm b}
 eval (Con i)   = return (Con i)
 eval (Incr)    = incr >> return (Con 0)
 
 --apply :: Term -> Term -> StateMonad2 Term
 apply (Thunk (Lam x b) e) a =
     do  orig <- currEnv
-	withEnv e (pushVar x (Thunk a orig) (traverseTerm b))
+        withEnv e (pushVar x (Thunk a orig) (traverseTerm b))
 apply a b         = fail ("bad application: " ++ pp a ++
-			      "  [ " ++ pp b ++ " ].")
+                              "  [ " ++ pp b ++ " ].")
 
 
 
@@ -200,8 +200,8 @@ simpleEval env e@Incr =
     return (Con 0)
 simpleEval env (Add u v) =
     do {Con u' <- simpleEval env u;
-	Con v' <- simpleEval env v;
-	return (Con (u' + v'))}
+        Con v' <- simpleEval env v;
+        return (Con (u' + v'))}
     where
     addCons (Con a) (Con b) = return (Con (a+b))
     addCons (Con _) b = fail ("type error in second arg of Add: " ++ pp b)
@@ -210,14 +210,14 @@ simpleEval env f@(Lam x b) =
     return (Thunk f env)  -- return a closure!
 simpleEval env (App u v) =
     do {u' <- simpleEval env u;
-	-- call-by-name, so we do not evaluate the argument v
-	simpleApply env u' v
+        -- call-by-name, so we do not evaluate the argument v
+        simpleApply env u' v
        }
 simpleEval env (IfZero c a b) =
     do {val <- simpleEval env c;
-	if val == Con 0
-	   then simpleEval env a
-	   else simpleEval env b}
+        if val == Con 0
+           then simpleEval env a
+           else simpleEval env b}
 simpleEval env (Thunk t e) =
     simpleEval e t
 
@@ -227,7 +227,7 @@ simpleApply env (Thunk (Lam x b) e) a =
     where
     env2 = (x, Thunk a env) : e
 simpleApply env a b         = fail ("bad application: " ++ pp a ++
-			      "  [ " ++ pp b ++ " ].")
+                              "  [ " ++ pp b ++ " ].")
 
 ------------------------------------------------------------
 -- Utility functions for printing terms and envs.
@@ -255,7 +255,7 @@ ppn n (IfZero c a b) = bracket n 0
 ppn n (Thunk t e) = bracket n 0 (ppn 3 t ++ "::" ++ ppenv e)
 
 bracket outer this t | this <= outer = "(" ++ t ++ ")"
-		     | otherwise     = t
+                     | otherwise     = t
 
 
 ------------------------------------------------------------
@@ -274,10 +274,10 @@ iffalse = (IfZero (Con 1) (Con 2) (Con 1))
 sum0 :: Term
 sum0 = (App fix partialSum0)
 partialSum0 = (Lam "sum"
-		  (Lam "n"
-		   (IfZero (Var "n")
-		    (Con 0)
-		    (Add (Var "n") (App (Var "sum") nMinus1)))))
+                  (Lam "n"
+                   (IfZero (Var "n")
+                    (Con 0)
+                    (Add (Var "n") (App (Var "sum") nMinus1)))))
 nMinus1 = (Add (Var "n") (Con (-1)))
 
 lfxx :: Term

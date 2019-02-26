@@ -56,7 +56,7 @@ data BcIns' b e x where
   Goto   :: !b                       -> BcIns' b O C
   CondBranch :: !CmpOp -> !OpTy -> !BcVar -> !BcVar
              -> !b -> !b             -> BcIns' b O C
-  Case :: !CaseType -> !BcVar 
+  Case :: !CaseType -> !BcVar
        -> [(BcTag, LiveSet, b)]   -> BcIns' b O C
   Call :: !(Maybe (BcVar, b, LiveSet))
        -> !BcVar -> ![BcVar]         -> BcIns' b O C
@@ -240,7 +240,7 @@ hooplUniqueFromUniqueSupply us =
 instance Pretty BcVar where
   ppr (BcVar v t) = ppr v <> colour2 (brackets (ppr t))
   ppr (BcReg n t) = char 'r' <> int n <> char '_' <> ppr t
-  
+
 instance Pretty Label where
   ppr lbl = text (show lbl)
 
@@ -291,7 +291,7 @@ instance Pretty b => Pretty (BcIns' b e x) where
     text "case" <+> ppr r $$
     indent 2 (vcat (map ppr_target targets))
    where
-     ppr_target (tag, lives, target) = 
+     ppr_target (tag, lives, target) =
        ppr tag <> colon <+> ppr target <+> pprLives lives
   ppr (Call rslt f args) =
     align $
@@ -477,7 +477,7 @@ insLoadBlackhole :: BcVar -> BcGraph O O
 insLoadBlackhole r = mkMiddle $ Assign r (Load LoadBlackhole)
 
 insMkAp :: BcVar -> [BcVar] -> BcGraph O O
-insMkAp r args 
+insMkAp r args
  | length args > cMAX_CALL_ARGS + 1 = error "Too many arguments to ALLOCAP"
  | otherwise
  = mkMiddle $ Assign r (AllocAp args S.empty)
@@ -519,7 +519,7 @@ insGoto :: BlockId -> BcGraph O C
 insGoto l = mkLast $ Goto l
 
 insCall :: Maybe (BcVar, BlockId) -> BcVar -> [BcVar] -> BcGraph O C
-insCall kont f args 
+insCall kont f args
   | length args > cMAX_CALL_ARGS
   = error $ "Too many arguments to CALL/CALLT (" ++ show (length args) ++ ")"
   | otherwise
@@ -590,7 +590,7 @@ collectLiterals code = V.foldl' comb S.empty (fc_code code)
         -> S.Set (Either BcConst Id)
    comb s (Fst _) = s
    comb s (Mid ins_) = case ins_ of
-     Assign _ (Load (LoadLit c)) -> S.insert (Left c) s 
+     Assign _ (Load (LoadLit c)) -> S.insert (Left c) s
      Assign _ (Load (LoadGlobal x)) -> S.insert (Right x) s
      _ -> s
    comb s (Lst _) = s
@@ -706,9 +706,9 @@ tst0 = putStrLn $ runBcM $ do
                       livenessAnalysis2 (JustC l)
                       g0 noFacts
   return $
-    showGraph showNode g1 ++ "\n" ++ 
+    showGraph showNode g1 ++ "\n" ++
     show (mapToList lives1) ++ "\n---------------\n" ++
-    showGraph showNode g2 ++ "\n" ++ 
+    showGraph showNode g2 ++ "\n" ++
     show (mapToList lives2)
 -}
 tst2 = pprint $ runBcM $ do

@@ -20,13 +20,13 @@ typedef union {
     StgHalfWord ptrs;  // number of pointers
     StgHalfWord nptrs; // number of non-pointers
   } payload;
-  
+
   StgWord bitmap; // bit map that describes pointers and non-pointers.
 
   LcLargeBitmap *large_bitmap;  // if we need more than 32/64 bits.
 
   // possibly add more stuff here.
-  
+
 } LcClosureInfo;
 
 /* The common part of any info table.
@@ -38,16 +38,16 @@ typedef struct LcInfoTable_ {
   char* closure_desc;
 
   LcClosureInfo layout; // closure layout info (one word)
-  
+
   StgHalfWord type;       // closure type
   StgHalfWord srt_bitmap; // number of entries in SRT or constructor tag
-  
+
   BcIns code[];
 } *LcInfoTablePtr;
 
 typedef struct LcConInfoTable_ {
   char *con_descr;  // name of the data constructor in the form:
-		    //     Package:Module.Name
+                    //     Package:Module.Name
   LcInfoTable i;
 } LcConInfoTable;
 

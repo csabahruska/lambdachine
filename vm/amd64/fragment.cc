@@ -463,7 +463,7 @@ asmStackOverflowIsImplementedInAssembly(void) {
     /* return to original caller */
     "pop %%rbp\n\t"
     "ret\n\t"
-    
+
     : : "i"(SAVE_SIZE));
 }
 

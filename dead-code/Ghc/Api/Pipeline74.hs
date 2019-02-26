@@ -161,7 +161,7 @@ runPipeline stop_phase hsc_env0 hooks (input_fn, mb_phase)
   case output of
     Temporary ->
         return (dflags', output_fn)
-    _other -> 
+    _other ->
         do final_fn <- get_output_fn dflags' stop_phase maybe_loc
            when (final_fn /= output_fn) $ do
               let msg = ("Copying `" ++ output_fn ++"' to `" ++ final_fn ++ "'")
@@ -935,7 +935,7 @@ runPhase SplitAs _input_fn dflags
 --                 ++ map SysTools.Option lo_opts)
 
 --     return (LlvmLlc, output_fn)
---   where 
+--   where
 --         -- we always (unless -optlo specified) run Opt since we rely on it to
 --         -- fix up some pretty big deficiencies in the code we generate
 --         llvmOpts = ["-mem2reg", "-O1", "-O2"]
@@ -956,7 +956,7 @@ runPhase SplitAs _input_fn dflags
 --                          False                            -> LlvmMangle
 --                          True | dopt Opt_SplitObjs dflags -> Splitter
 --                          True                             -> As
-                        
+
 --     output_fn <- phaseOutputFilename next_phase
 
 --     io $ SysTools.runLlvmLlc dflags
@@ -976,7 +976,7 @@ runPhase SplitAs _input_fn dflags
 --         -- On ARMv7 using LLVM, LLVM fails to allocate floating point registers
 --         -- while compiling GHC source code. It's probably due to fact that it
 --         -- does not enable VFP by default. Let's do this manually here
---         fpOpts = case platformArch (targetPlatform dflags) of 
+--         fpOpts = case platformArch (targetPlatform dflags) of
 --                    ArchARM ARMv7 ext -> if (elem VFPv3 ext)
 --                                       then ["-mattr=+v7,+vfp3"]
 --                                       else if (elem VFPv3D16 ext)

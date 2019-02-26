@@ -86,7 +86,7 @@ typedef int64_t  i8;
 #define cast(t, exp)    ((t)(exp))
 #endif
 
-#define cast_byte(i)	cast(u1, (i))
+#define cast_byte(i)    cast(u1, (i))
 
 typedef int bool;
 enum { false = 0, true = 1 };
@@ -121,8 +121,8 @@ enum { false = 0, true = 1 };
 /* Note: a and b must not have side effects. */
 #define MAX(a, b) ((a) < (b) ? (b) : (a));
 
-/*  
-Inlining 
+/*
+Inlining
 --------
 
 INLINE_HEADER: inline functions in header files (like macros)
@@ -139,7 +139,7 @@ from separately compiled modules.
 # define LC_USED     __attribute__((used))
 
 // Comment from GHC's Rts.h:
-// 
+//
 // The special "extern inline" behaviour is now only supported by gcc
 // when _GNUC_GNU_INLINE__ is defined, and you have to use
 // __attribute__((gnu_inline)).  So when we don't have this, we use
@@ -184,20 +184,20 @@ from separately compiled modules.
 #endif
 
 #if defined(__i386__)
-#define LC_FASTCALL	__attribute__((fastcall))
+#define LC_FASTCALL     __attribute__((fastcall))
 #else
 #define LC_FASTCALL
 #endif
 
-#define LC_LIKELY(x)	__builtin_expect(!!(x), 1)
-#define LC_UNLIKELY(x)	__builtin_expect(!!(x), 0)
+#define LC_LIKELY(x)    __builtin_expect(!!(x), 1)
+#define LC_UNLIKELY(x)  __builtin_expect(!!(x), 0)
 
 #else
 
 #error "Unknown compiler.  Don't know how to define LC_FASTCALL et al."
 
 #endif
-  
+
 /* Terminal colours */
 
 #define COL_RESET  "\033[0m"
@@ -254,21 +254,21 @@ INLINE_HEADER void sayonara(const char *last_words) {
 #endif
 
 /* JIT compiler limits. */
-#define LC_MAX_JSLOTS	250		/* Max. # of stack slots for a trace. */
-#define LC_MAX_PHI	32		/* Max. # of PHIs for a loop. */
-#define LC_MAX_EXITSTUBGR	8	/* Max. # of exit stub groups. */
+#define LC_MAX_JSLOTS   250             /* Max. # of stack slots for a trace. */
+#define LC_MAX_PHI      32              /* Max. # of PHIs for a loop. */
+#define LC_MAX_EXITSTUBGR       8       /* Max. # of exit stub groups. */
 
 /* Various macros. */
-#define i32ptr(p)	((int32_t)(intptr_t)(void *)(p))
-#define u32ptr(p)	((uint32_t)(intptr_t)(void *)(p))
+#define i32ptr(p)       ((int32_t)(intptr_t)(void *)(p))
+#define u32ptr(p)       ((uint32_t)(intptr_t)(void *)(p))
 
-#define checki8(x)	((x) == (int32_t)(int8_t)(x))
-#define checku8(x)	((x) == (int32_t)(uint8_t)(x))
-#define checki16(x)	((x) == (int32_t)(int16_t)(x))
-#define checku16(x)	((x) == (int32_t)(uint16_t)(x))
-#define checki32(x)	((x) == (int32_t)(x))
-#define checku32(x)	((x) == (uint32_t)(x))
-#define checkptr32(x)	((uintptr_t)(x) == (uint32_t)(uintptr_t)(x))
+#define checki8(x)      ((x) == (int32_t)(int8_t)(x))
+#define checku8(x)      ((x) == (int32_t)(uint8_t)(x))
+#define checki16(x)     ((x) == (int32_t)(int16_t)(x))
+#define checku16(x)     ((x) == (int32_t)(uint16_t)(x))
+#define checki32(x)     ((x) == (int32_t)(x))
+#define checku32(x)     ((x) == (uint32_t)(x))
+#define checkptr32(x)   ((uintptr_t)(x) == (uint32_t)(uintptr_t)(x))
 #define UNUSED(x)  ((void)(x))  /* to avoid warnings */
 #define lc_ffs(x)  ((uint32_t)__builtin_ctz(x))       /* position of last bit */
 /* postion of first bit (most significant) set */
@@ -284,10 +284,10 @@ static LC_AINLINE uint32_t lc_bswap(uint32_t x)
 
 /* A really naive Bloom filter. But sufficient for our needs. */
 typedef Word BloomFilter;
-#define BLOOM_MASK	(8*sizeof(BloomFilter) - 1)
-#define bloombit(x)	((Word)1 << ((x) & BLOOM_MASK))
-#define bloomset(b, x)	((b) |= bloombit((x)))
-#define bloomtest(b, x)	((b) & bloombit((x)))
+#define BLOOM_MASK      (8*sizeof(BloomFilter) - 1)
+#define bloombit(x)     ((Word)1 << ((x) & BLOOM_MASK))
+#define bloomset(b, x)  ((b) |= bloombit((x)))
+#define bloomtest(b, x) ((b) & bloombit((x)))
 
 
 #endif /* LC_COMMON_H */

@@ -14,12 +14,12 @@
 #include <sys/mman.h>
 
 #ifndef MAP_ANONYMOUS
-#define MAP_ANONYMOUS	MAP_ANON
+#define MAP_ANONYMOUS   MAP_ANON
 #endif
 
-#define MCPROT_RW	(PROT_READ|PROT_WRITE)
-#define MCPROT_RX	(PROT_READ|PROT_EXEC)
-#define MCPROT_RWX	(PROT_READ|PROT_WRITE|PROT_EXEC)
+#define MCPROT_RW       (PROT_READ|PROT_WRITE)
+#define MCPROT_RX       (PROT_READ|PROT_EXEC)
+#define MCPROT_RWX      (PROT_READ|PROT_WRITE|PROT_EXEC)
 
 static void *mcode_alloc_at(JitState *J, uintptr_t hint, size_t sz, int prot)
 {
@@ -55,8 +55,8 @@ static void mcode_setprot(void *p, size_t sz, int prot)
 ** any *other* flaw in your C application logic, then any RWX memory page
 ** simplifies writing an exploit considerably.
 */
-#define MCPROT_GEN	MCPROT_RWX
-#define MCPROT_RUN	MCPROT_RWX
+#define MCPROT_GEN      MCPROT_RWX
+#define MCPROT_RUN      MCPROT_RWX
 
 static void mcode_protect(JitState *J, int prot)
 {
@@ -73,8 +73,8 @@ static void mcode_protect(JitState *J, int prot)
 ** The current memory area is marked read-write (but NOT executable) only
 ** during the short time window while the assembler generates machine code.
 */
-#define MCPROT_GEN	MCPROT_RW
-#define MCPROT_RUN	MCPROT_RX
+#define MCPROT_GEN      MCPROT_RW
+#define MCPROT_RUN      MCPROT_RX
 
 /* Change protection of MCode area. */
 static void mcode_protect(JitState *J, int prot)
@@ -89,7 +89,7 @@ static void mcode_protect(JitState *J, int prot)
 
 /* -- MCode area allocation ----------------------------------------------- */
 
-#define mcode_validptr(p)	((p) && (uintptr_t)(p) < (uintptr_t)1<<47)
+#define mcode_validptr(p)       ((p) && (uintptr_t)(p) < (uintptr_t)1<<47)
 
 /* Get memory within relative jump distance of our code in 64 bit mode. */
 static void *mcode_alloc(JitState *J, size_t sz)
@@ -107,9 +107,9 @@ static void *mcode_alloc(JitState *J, size_t sz)
       void *p = mcode_alloc_at(J, hint, sz, MCPROT_GEN);
 
       if (mcode_validptr(p)) {
-	if ((uintptr_t)p + sz - target < range || target - (uintptr_t)p < range)
-	  return p;
-	mcode_free(J, p, sz);  /* Free badly placed area. */
+        if ((uintptr_t)p + sz - target < range || target - (uintptr_t)p < range)
+          return p;
+        mcode_free(J, p, sz);  /* Free badly placed area. */
       }
     }
     /* Next try probing pseudo-random addresses. */
@@ -126,8 +126,8 @@ static void *mcode_alloc(JitState *J, size_t sz)
 
 /* Linked list of MCode areas. */
 typedef struct MCLink {
-  MCode *next;		/* Next area. */
-  size_t size;		/* Size of current area. */
+  MCode *next;          /* Next area. */
+  size_t size;          /* Size of current area. */
 } MCLink;
 
 /* Allocate a new MCode area. */
@@ -210,8 +210,8 @@ MCode *lj_mcode_patch(JitState *J, MCode *ptr, int finish)
       mc = ((MCLink *)mc)->next;
       LC_ASSERT(mc != NULL);
       if (ptr >= mc && ptr < (MCode *)((char *)mc + ((MCLink *)mc)->size)) {
-	mcode_setprot(mc, ((MCLink *)mc)->size, MCPROT_GEN);
-	return mc;
+        mcode_setprot(mc, ((MCLink *)mc)->size, MCPROT_GEN);
+        return mc;
       }
     }
   }

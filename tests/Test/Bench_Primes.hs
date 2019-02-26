@@ -32,7 +32,7 @@ root n = primes !! n
     primes :: [Int]
     primes = map head (iterate the_filter (iterate succ 2))
 
-test = 
+test =
   root 25 == 101
 
 bench =

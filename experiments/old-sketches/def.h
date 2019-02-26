@@ -52,10 +52,10 @@ typedef int64_t  StgInt;
 typedef StgWord *StgPtr;
 
 #ifndef cast
-#define cast(t, exp)	((t)(exp))
+#define cast(t, exp)    ((t)(exp))
 #endif
 
-#define cast_byte(i)	cast(uint8_t, (i))
+#define cast_byte(i)    cast(uint8_t, (i))
 
 #endif
 

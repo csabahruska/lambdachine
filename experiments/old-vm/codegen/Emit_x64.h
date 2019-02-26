@@ -7,24 +7,24 @@
 
 /* -- Emit basic instructions --------------------------------------------- */
 
-#define MODRM(mode, r1, r2)	((MCode)((mode)+(((r1)&7)<<3)+((r2)&7)))
+#define MODRM(mode, r1, r2)     ((MCode)((mode)+(((r1)&7)<<3)+((r2)&7)))
 
 #define REXRB(p, rr, rb) \
     { MCode rex = 0x40 + (((rr)>>1)&4) + (((rb)>>3)&1); \
       if (rex != 0x40) *--(p) = rex; }
-#define FORCE_REX		0x200
-#define REX_64			(FORCE_REX|0x080000)
+#define FORCE_REX               0x200
+#define REX_64                  (FORCE_REX|0x080000)
 
-#define emit_i8(as, i)		(*--as->mcp = (MCode)(i))
-#define emit_i32(as, i)		(*(int32_t *)(as->mcp-4) = (i), as->mcp -= 4)
-#define emit_u32(as, u)		(*(uint32_t *)(as->mcp-4) = (u), as->mcp -= 4)
+#define emit_i8(as, i)          (*--as->mcp = (MCode)(i))
+#define emit_i32(as, i)         (*(int32_t *)(as->mcp-4) = (i), as->mcp -= 4)
+#define emit_u32(as, u)         (*(uint32_t *)(as->mcp-4) = (u), as->mcp -= 4)
 
 #define emit_x87op(as, xo) \
   (*(uint16_t *)(as->mcp-2) = (uint16_t)(xo), as->mcp -= 2)
 
 /* op */
 static LC_AINLINE MCode *emit_op(x86Op xo, Reg rr, Reg rb, Reg rx,
-				 MCode *p, int delta)
+                                 MCode *p, int delta)
 {
   int n = (int8_t)xo;
 #if defined(__GNUC__)
@@ -135,27 +135,27 @@ static void emit_mrm(ASMState *as, x86Op xo, Reg rr, Reg rb)
       p -= 4;
       *(int32_t *)p = as->mrm.ofs;
       if (as->mrm.idx != RID_NONE)
-	goto mrmidx;
+        goto mrmidx;
       *--p = MODRM(XM_SCALE1, RID_ESP, RID_EBP);
       rb = RID_ESP;
     } else {
       if (as->mrm.ofs == 0 && (rb&7) != RID_EBP) {
-	mode = XM_OFS0;
+        mode = XM_OFS0;
       } else if (checki8(as->mrm.ofs)) {
-	*--p = (MCode)as->mrm.ofs;
-	mode = XM_OFS8;
+        *--p = (MCode)as->mrm.ofs;
+        mode = XM_OFS8;
       } else {
-	p -= 4;
-	*(int32_t *)p = as->mrm.ofs;
-	mode = XM_OFS32;
+        p -= 4;
+        *(int32_t *)p = as->mrm.ofs;
+        mode = XM_OFS32;
       }
       if (as->mrm.idx != RID_NONE) {
       mrmidx:
-	as->mcp = emit_opmx(xo, mode, as->mrm.scale, rr, rb, as->mrm.idx, p);
-	return;
+        as->mcp = emit_opmx(xo, mode, as->mrm.scale, rr, rb, as->mrm.idx, p);
+        return;
       }
       if ((rb&7) == RID_ESP)
-	*--p = MODRM(XM_SCALE1, RID_ESP, RID_ESP);
+        *--p = MODRM(XM_SCALE1, RID_ESP, RID_ESP);
     }
   }
   as->mcp = emit_opm(xo, mode, rr, rb, p, 0);
@@ -178,8 +178,8 @@ static void emit_gmrmi(ASMState *as, x86Group xg, Reg rb, int32_t i)
 /* -- Emit loads/stores --------------------------------------------------- */
 
 /* Instruction selection for XMM moves. */
-#define XMM_MOVRR(as)	(XO_MOVAPS)
-#define XMM_MOVRM(as)	(XO_MOVSD)
+#define XMM_MOVRR(as)   (XO_MOVAPS)
+#define XMM_MOVRM(as)   (XO_MOVSD)
 
 /* mov [base+ofs], i */
 static void emit_movmroi(ASMState *as, Reg base, int32_t ofs, int32_t i)
@@ -195,8 +195,8 @@ static void emit_movmroi(ASMState *as, Reg base, int32_t ofs, int32_t i)
 /* Get/set global_State fields. */
 #define emit_opgl(as, xo, r, field) \
   emit_rma(as, (xo), (r), (void *)&J2G(as->J)->field)
-#define emit_getgl(as, r, field)	emit_opgl(as, XO_MOV, (r), field)
-#define emit_setgl(as, r, field)	emit_opgl(as, XO_MOVto, (r), field)
+#define emit_getgl(as, r, field)        emit_opgl(as, XO_MOV, (r), field)
+#define emit_setgl(as, r, field)        emit_opgl(as, XO_MOVto, (r), field)
 
 #define emit_setvmstate(as, i) \
   (emit_i32(as, i), emit_opgl(as, XO_MOVmi, 0, vmstate))
@@ -241,7 +241,7 @@ static void emit_loadu64(ASMState *as, Reg r, uint64_t u64)
 typedef MCode *MCLabel;
 
 /* Return label pointing to current PC. */
-#define emit_label(as)		((as)->mcp)
+#define emit_label(as)          ((as)->mcp)
 
 /* Compute relative 32 bit offset for jump and call instructions. */
 static LC_AINLINE int32_t jmprel(MCode *p, MCode *target)
@@ -261,13 +261,13 @@ static void emit_jcc(ASMState *as, int cc, MCode *target)
   as->mcp = p - 6;
 }
 
-#define emit_call(as, f)	emit_call_(as, (MCode *)(void *)(f))
+#define emit_call(as, f)        emit_call_(as, (MCode *)(void *)(f))
 
 /* -- Emit generic operations --------------------------------------------- */
 
 /* Use 64 bit operations to handle 64 bit IR types. */
-//#define REX_64IR(ir, r)		((r) + (irt_is64((ir)->t) ? REX_64 : 0))
-#define REX_64IR(ir, r)		((r) + REX_64)
+//#define REX_64IR(ir, r)               ((r) + (irt_is64((ir)->t) ? REX_64 : 0))
+#define REX_64IR(ir, r)         ((r) + REX_64)
 
 /* Generic move between two regs. */
 static void emit_movrr(ASMState *as, Reg dst, Reg src)
@@ -304,9 +304,9 @@ static void emit_memstore_i32(ASMState *as, Reg ptr, int32_t ofs, int32_t imm32)
   emit_rmro(as, XO_MOVmi, REX_64|0, ptr, ofs);
 }
 
-#define emit_spsub(as, ofs)	emit_addptr(as, RID_ESP|REX_64, -(ofs))
+#define emit_spsub(as, ofs)     emit_addptr(as, RID_ESP|REX_64, -(ofs))
 
 /* Prefer rematerialization of BASE/L from global_State over spills. */
-#define emit_canremat(ref)	((ref) <= REF_BASE)
+#define emit_canremat(ref)      ((ref) <= REF_BASE)
 
 #endif

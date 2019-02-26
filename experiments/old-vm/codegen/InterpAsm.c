@@ -62,7 +62,7 @@ static void enterTrace(JitState *J, Fragment *F) {
   Thread *T  = J->T;
 
   DBG_LVL(2, "framesize = %d, spillsize = %d\n",
-	  F->framesize, spillSizeArea);
+          F->framesize, spillSizeArea);
 
   // Allocate spill area
   if(stackOverflow(T, T->top, F->framesize + spillSizeArea)) {
@@ -76,7 +76,7 @@ static void enterTrace(JitState *J, Fragment *F) {
   DBG_LVL(1, "Pre trace: Hp = %p, HpLim = %p\n", hp, G_storage.limit);
 
   asmEnter(F, T, spillArea, hp, G_storage.limit, T->stack + T->stack_size,
-	   F->mcode);
+           F->mcode);
 }
 
 static void LC_USED
@@ -122,7 +122,7 @@ asmEnterIsImplementedInAssembly(Fragment *F, Thread *T, Word *spillArea,
      /* save %rbp and also makes %rsp 16-byte aligned */
     "push %%rbp\n\t"
 
-    "movq 16(%%rsp),%%r10\n\t"	/* r10 = code :: (MCode *) */
+    "movq 16(%%rsp),%%r10\n\t"  /* r10 = code :: (MCode *) */
 
     /* save other callee saved regs */
     "movq %%rsp, %%rax\n\t"
@@ -137,7 +137,7 @@ asmEnterIsImplementedInAssembly(Fragment *F, Thread *T, Word *spillArea,
     "movq %%rdi,-48(%%rax)\n\t" /* F */
     "movq %%rsi,-56(%%rax)\n\t" /* T */
     "movq %%rdx,-64(%%rax)\n\t" /* S */
-    "movq %%r9,-72(%%rax)\n\t"	/* StackLim */
+    "movq %%r9,-72(%%rax)\n\t"  /* StackLim */
     "movq %%r8,-80(%%rax)\n\t"  /* HpLim */
     /* &HpLim = [rsp + 0] */
 
@@ -155,7 +155,7 @@ asmEnterIsImplementedInAssembly(Fragment *F, Thread *T, Word *spillArea,
 
     : : "i"(SAVE_SIZE /*stack frame size*/), /* %0 */
         "i"(offsetof(struct Thread_,base)), /* %1 */
-        "i"(sizeof(Word))		    /* %2 */
+        "i"(sizeof(Word))                   /* %2 */
     );
 }
 
@@ -223,7 +223,7 @@ asmExitIsImplementedInAssembly() {
     "movsd %%xmm0,  -128(%%rbp)\n\t"
 #endif
 
-    /* call the generic restore routine exitTrace(ExitNo n, ExitState *s) 
+    /* call the generic restore routine exitTrace(ExitNo n, ExitState *s)
      * rdi = ExitNo
      * rsi = ExitState* (stored on the c-stack */
     "movq %%rsp, %%rsi\n\t"

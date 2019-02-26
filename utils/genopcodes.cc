@@ -19,12 +19,12 @@ main(int argc, char **argv)
 
   printf("#define branch_BIAS 0x%x\n", BcIns::kBranchBias);
   printf("#define cMAX_CALL_ARGS %d\n\n", BcIns::kMaxCallArgs);
-  
+
 #define DEF_LINE(name,fmt)                                         \
   printf("#define " STR(opc_ ## name) " %d\n", BcIns::k##name);
-  
+
   BCDEF(DEF_LINE)
-#undef DEF_LINE  
+#undef DEF_LINE
     ;
   printf("\n");
 
@@ -36,7 +36,7 @@ main(int argc, char **argv)
   printf("#define littype_CLOSURE %d\n", LIT_CLOSURE);
   printf("#define littype_INFO %d\n", LIT_INFO);
   printf("\n");
-  
+
   // Closure types
 #define DEF_LINE(name, _) \
   printf("#define " STR(cltype_ ## name) " %d\n", name);

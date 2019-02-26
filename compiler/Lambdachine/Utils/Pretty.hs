@@ -37,7 +37,7 @@ import Debug.Trace
 ------------------------------------------------------------------------
 -- * Global Environment Stuff
 
-newtype GlobalEnv = GlobalEnv 
+newtype GlobalEnv = GlobalEnv
   { envDynFlags :: DynFlags }
 
 class HasGlobalEnv env where
@@ -102,7 +102,7 @@ debugPrint :: Pretty a => GlobalEnv -> a -> IO ()
 debugPrint env x = B.putStrLn $ B.fromString $ pretty env (withDebugStyle (ppr x))
 
 render :: GlobalEnv -> PDoc -> String
-render env d = P.displayS (P.renderPretty 0.8 100 $ 
+render env d = P.displayS (P.renderPretty 0.8 100 $
                runPDoc d $! PDocContext UserStyle env) ""
 
 debugRender :: GlobalEnv -> PDoc -> String

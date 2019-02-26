@@ -1003,7 +1003,7 @@ emitLinearIns bit_r lit_ids tgt_labels r ins_id ins = do
           emitInsABC r opc_ALLOC (i2b d) (i2b i) (i2b (length args))
           emitArgs r args
       emitBitSets bit_r lives r
-    Mid (Assign (BcReg d _) (AllocAp args lives)) -> 
+    Mid (Assign (BcReg d _) (AllocAp args lives)) ->
       assert (length args - 1 <= cMAX_CALL_ARGS) $ do
       -- the pointer mask excludes the first argument (because it's
       -- always a pointer)
@@ -1154,7 +1154,7 @@ emitCase r casetype (BcReg reg regty) alts0 tgt_labels = do
       liftBuildM $ R.placeLabel r post_case_label
  where
    (dflt, alts, enc, len) = viewCaseAlts casetype alts0
- 
+
    -- Sometimes GHC generates CASEs that are not exhaustive. It does
    -- so if it can prove that the missing cases are impossible (e.g.,
    -- due to a prior CASE expression).  To protect against
@@ -1168,7 +1168,7 @@ emitCase r casetype (BcReg reg regty) alts0 tgt_labels = do
    --     case (x :: T) of B -> ...body...
    --
    -- then we translate this into the instruction:
-   -- 
+   --
    --     EVAL x
    --     CASE x [1..3]
    --       1: ->L1
@@ -1402,7 +1402,7 @@ encodeModule' env mdl =
        emitId r x
 
    emitCode :: Int -> [OpTy] -> FinalCode -> Build ()
-   emitCode arity arg_tys code = 
+   emitCode arity arg_tys code =
      assert (arity == length arg_tys) $ do
 
      r <- liftR R.newRegion
@@ -1433,7 +1433,7 @@ encodeModule' env mdl =
                S.fromList [ BcReg n t | (n, t) <- zip [0..] tys,
                                         isGCPointer t ]
          emitWord16s rbitsets (regsToBits16 ptr_arg_regs)
-     
+
      emitInsAD rcode opc_FUNC (i2b (fc_framesize code)) 0
      emitInstructions rbitsets rcode lit_ids code
      liftR $ R.placeLabel rcode code_end

@@ -109,7 +109,7 @@ void Jit::initRecording(Capability *cap, Word *base, BcIns *startPc)
 
 /*
   Find a possible duplicate of the refence in the snapshot.
-  
+
   Searches through the snapshot up until `searchLimit`.  If it finds a
   duplicate returns the corresponding reference from `buf`s abstract
   stack. Otherwise, returns 0;
@@ -132,7 +132,7 @@ void Jit::replaySnapshot(Fragment *parent, SnapNo snapno, Word *base)
   int relbase = snap.relbase();
   BloomFilter seen = 0;
   uint32_t numInheritedSlots = 0;
-  
+
   for (SnapmapRef i = snap.begin(); i < snap.end(); ++i) {
     int slot = snapmap->slotId(i) - relbase;
     IRRef ref = snapmap->slotRef(i);
@@ -182,7 +182,7 @@ void Jit::beginSideTrace(Capability *cap, Word *base, Fragment *parent, SnapNo s
   LC_ASSERT(cap_ == NULL);
   LC_ASSERT(targets_.size() == 0);
   LC_ASSERT(cap != NULL);
-  
+
   Snapshot &snap = parent->snap(snapno);
   initRecording(cap, base, snap.pc());
 
@@ -334,7 +334,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
   // of the code then check whether there was a PAP later by comparing
   // `pap` to NULL.  Fortunately, the function part of a PAP can never
   // be another PAP (this is also needed for the GC).
-  
+
   if (type == PAP) {
     pap = (PapClosure *)fnode;
     pap_args = pap->info_.nargs_;
@@ -358,7 +358,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
                             direct_args, pointer_mask);
     u4 apk_framesize = MiscClosures::apContFrameSize(direct_args);
     TRef apk_closure_ref = buf_.literal(IRT_CLOS, (Word)apk_closure);
-    
+
     // Create new frame (if CALL) or adjust size of current frame (if
     // CALLT).
     if (returnPc != NULL) { // CALL
@@ -373,7 +373,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
       }
       buf_.setSlot(-1, apk_closure_ref);
     }
-    
+
     // Put arguments into place.
     for (uint32_t i = 0; i < direct_args; ++i) {
       buf_.setSlot(i, args[i]);
@@ -400,7 +400,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
   LC_ASSERT(type == FUN);
 
   uint32_t total_args = direct_args + pap_args;
-  
+
   const CodeInfoTable *info = (CodeInfoTable *)fnode->info();
   uint32_t arity = info->code()->arity;
 
@@ -408,7 +408,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     // We need a guard for the info table of the called function.
     // Again, this guard must occur before any slot writes.
 
-    TRef funref = pap == NULL ? fnode_ref : 
+    TRef funref = pap == NULL ? fnode_ref :
       loadField(buf_, fnode_ref, PAP_FUNCTION_OFFSET / sizeof(Word), IRT_CLOS);
     specialiseOnInfoTable(buf_, funref, fnode);
 
@@ -442,7 +442,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     // buf_.slots_.debugPrint(cerr);
     // getchar();
 
-    
+
     if (false && pap) {
       buf_.debugPrint(cerr, -1);
       buf_.slots_.debugPrint(cerr);
@@ -475,7 +475,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
 
   } else if (arity < total_args) { // Overapplication.
 
-    TRef funref = pap == NULL ? fnode_ref : 
+    TRef funref = pap == NULL ? fnode_ref :
       loadField(buf_, fnode_ref, PAP_FUNCTION_OFFSET / sizeof(Word), IRT_CLOS);
     specialiseOnInfoTable(buf_, funref, fnode);
 
@@ -498,7 +498,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
       }
       buf_.setSlot(-1, apk_closure_ref);
     }
-    
+
     // Fill in application continuation frame.
     for (uint32_t i = 0; i < extra_args; ++i) {
       TRef ref = papOrDirectArg(buf_, arity + i, pap_args, args, fnode_ref);
@@ -506,11 +506,11 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     }
 
     clearSlots(buf_, extra_args, apk_framesize);
-    
+
     uint32_t framesize = info->code()->framesize;
     Word *newbase = pushFrame(base, apk_return_addr, funref, framesize);
     if (!newbase) return false;
-    
+
     for (uint32_t i = 0; i < arity; ++i) {
       buf_.setSlot(i, papOrDirectArg(buf_, i, pap_args, args, fnode_ref));
     }
@@ -538,9 +538,9 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     }
 
     return true;
-    
+
   } else {
-    TRef funref = pap == NULL ? fnode_ref : 
+    TRef funref = pap == NULL ? fnode_ref :
       loadField(buf_, fnode_ref, PAP_FUNCTION_OFFSET / sizeof(Word), IRT_CLOS);
     specialiseOnInfoTable(buf_, funref, fnode);
 
@@ -574,13 +574,13 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     PapInfo pap_info;
     pap_info.nargs_ = total_args;
     pap_info.pointerMask_ = pointer_mask;
-    
+
     new_pap_fields[(PAP_INFO_OFFSET / sizeof(Word)) - 1] =
       buf_.literal(IRT_I64, pap_info.combined);
     new_pap_fields[(PAP_FUNCTION_OFFSET / sizeof(Word)) - 1] = funref;
 
     TRef pap_itbl = buf_.literal(IRT_INFO, (Word)MiscClosures::stg_PAP_info);
-    
+
     IRBuffer::HeapEntry entry = 0;
     TRef new_pap = buf_.emitNEW(pap_itbl, new_pap_size - 1, &entry);
     for (int i = 0; i < new_pap_size - 1; ++i) {
@@ -590,7 +590,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     // buf_.debugPrint(cerr, -2);
     // buf_.slots_.debugPrint(cerr);
     // callStack_.debugPrint(cerr, &buf_, 0);
-    
+
     if (returnPc) {
       // Set allocated as return result to be picked up by MOV_RES.
       buf_.setSlot(buf_.slots_.top() + FRAME_SIZE, new_pap);
@@ -618,7 +618,7 @@ Jit::recordGenericApply2(uint32_t call_info, Word *base,
     return false;
   }
 }
-                             
+
 /*
 bool Jit::recordGenericApply(uint32_t call_info, Word *base,
                              TRef fnode_ref, Closure *fnode,
@@ -650,7 +650,7 @@ bool Jit::recordGenericApply(uint32_t call_info, Word *base,
       cerr << "Abstract stack overflow." << endl;
       return false;
     }
-    
+
     // Move up given arguments
     for (int i = given_args - 1; i >= 0; --i)
       buf_.setSlot(papArgs + i, buf_.slot(i));
@@ -721,7 +721,7 @@ bool Jit::recordGenericApply(uint32_t call_info, Word *base,
     const CodeInfoTable *info = (CodeInfoTable *)fnode->info();
     uint32_t arity = info->code()->arity;
     if (arity == given_args) {
-      
+
 
       return true;
 
@@ -884,7 +884,7 @@ bool Jit::recordIns(BcIns *ins, Word *base, const Code *code) {
     buf_.setSlot(ins->a(), aref); \
     break; \
   }
-      
+
     ARITH_OP_RRR(kADDRR, kADD, IRT_I64);
     ARITH_OP_RRR(kSUBRR, kSUB, IRT_I64);
     ARITH_OP_RRR(kMULRR, kMUL, IRT_I64);
@@ -968,7 +968,7 @@ bool Jit::recordIns(BcIns *ins, Word *base, const Code *code) {
     LC_ASSERT(nargs < 32);
     uint32_t ptr_mask = *(uint32_t *)(ins + 1);
     ++ins;
-    
+
     uint8_t *arg = (uint8_t *)(ins + 1);
     for (int i = 0; i < nargs; ++i, ++arg) {
       args[i] = buf_.slot(*arg);
@@ -1398,7 +1398,7 @@ void Jit::finishRecording() {
     out.close();
   }
 #endif
-  
+
   resetRecorderState();
 
   if (DEBUG_COMPONENTS & DEBUG_ASSEMBLER) {
@@ -1525,7 +1525,7 @@ Word *Jit::pushFrame(Word *base, BcIns *returnPc,
   int topslot = buf_.slots_.top();
 
   TRef ret_ref = buf_.literal(IRT_PC, (Word)returnPc);
-  
+
   callStack_.pushFrame(ret_ref);
 
   buf_.setSlot(topslot + 0, buf_.baseLiteral(base));

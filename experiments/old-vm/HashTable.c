@@ -31,7 +31,7 @@ HashTable_insert(HashTable *ht, const char *key, void *value)
 {
   u4 size, mask, hash;
   HashEntry *entry;
-  
+
   if ((ht->entries * 100) / ht->size >= ht->threshold) {
     HashTable_rebuild(ht);
   }
@@ -64,7 +64,7 @@ HashTable_rebuild(HashTable *ht)
 
   for (i = 0; i < oldsize; ++i) {
     HashEntry *p, *next;
-    
+
     for (p = old_table[i]; p != NULL; p = next) {
       next = p->next;
       HashTable_insert(ht, p->key, p->value);
@@ -82,7 +82,7 @@ HashTable_lookup(HashTable *ht, const char *key)
   u4 mask = size - 1;
   u4 hash = hashString(key) & mask;
   HashEntry *p;
-  
+
   for (p = ht->table[hash]; p != NULL; p = p->next) {
     if (strcmp(p->key, key) == 0)
       return p->value;
@@ -117,7 +117,7 @@ HashTable_destroy(HashTable *ht, HashFreeFunc func)
     for (p = ht->table[i]; p != NULL; p = next) {
       next = p->next;
       if (func != NULL)
-	func(p->key, p->value);
+        func(p->key, p->value);
       xfree(p);
     }
   }
@@ -149,9 +149,9 @@ HashTable_print(FILE *out, HashTable *ht, HashValuePrinter printValue)
 {
   u4 size = ht->size;
   u4 i;
-  
+
   fprintf(out, "HashTable [size: %d, ents: %d] {\n", size, ht->entries);
-  
+
   for (i = 0; i < size; ++i) {
     HashEntry *p = ht->table[i];
     if (!p)
@@ -182,7 +182,7 @@ hashString(const char *str)
     hval += (hval<<1) + (hval<<4) + (hval<<7) + (hval<<8) + (hval<<24);
     hval ^= (u4)*bp++;
   }
-  
+
   return hval;
 }
 
@@ -205,7 +205,7 @@ main(int argc, char *argv[])
   printf("%s -> %s\n", "foobar", (char*)HashTable_lookup(ht, "foobar"));
 
   HashTable_destroy(ht, NULL);
-  
+
   return 0;
 }
 */

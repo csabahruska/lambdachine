@@ -8,7 +8,7 @@ a clean-up transformation called @CorePrep@ that essentially transforms
 Core into A-normal form.  The grammar for the output is:
 
 @
-    Trivial expressions 
+    Trivial expressions
        triv ::= lit |  var  | triv ty  |  /\a. triv  |  triv |> co
 
     Applications
@@ -18,7 +18,7 @@ Core into A-normal form.  The grammar for the output is:
        body ::= app
               | let(rec) x = rhs in body     -- Boxed only
               | case body of pat -> body
-	      | /\a. body
+              | /\a. body
               | body |> co
 
     Right hand sides (only place where lambdas can occur)
@@ -203,8 +203,8 @@ transTopLevelBind f (viewGhcLam -> (params, body)) = do
 -- Constructors with zero arguments are treated specially, so this
 -- function will return 'False' for them.
 looksLikeCon :: CoreExpr -> Bool
-looksLikeCon (viewGhcApp -> Just (f, args)) = 
-  not (null args) && isGhcConWorkId f 
+looksLikeCon (viewGhcApp -> Just (f, args)) =
+  not (null args) && isGhcConWorkId f
 looksLikeCon _ = False
 
 -- | Build the 'BCO' for a statically allocated constructor (i.e.,
@@ -297,8 +297,8 @@ data ClosureInfo
 -- Otherwise, the fields freshly allocated objects must be initialised
 -- to a dummy value in order to avoid confusing the garbage collector.
 -- For that reason we currently use Option 1.
--- 
-transBinds :: CoreBind -> LocalEnv -> FreeVarsIndex 
+--
+transBinds :: CoreBind -> LocalEnv -> FreeVarsIndex
            -> KnownLocs
            -> Trans (Bcis O, KnownLocs, FreeVars, LocalEnv)
 transBinds bind env fvi locs0 = do
@@ -369,7 +369,7 @@ build_bind_code fwd_env env fvi closures locs0 = do
      let bcis2 = bcis <*> bcis1 <*> insMove xvar fvar
          locs2 = updateLoc locs1 x (InVar xvar)
      go bcis2 locs2 (fvs `mappend` fvs1) objs
- 
+
    -- r = allocap f(a1,...,aN)
    go bcis locs0 fvs ((x, AppObj f args) : objs) = do
      (bcis1, locs1, fvs1, (freg:regs))
@@ -494,7 +494,7 @@ transFields f args = map to_field args
    to_field (Lam a x) | isTyVar a     = to_field x
    to_field (Cast x _)                = to_field x
 --   to_field (Note _ x)                = to_field x
-   to_field arg = 
+   to_field arg =
      error $ "transFields: Ill-formed argument: " ++ showPpr arg
 
 -- -------------------------------------------------------------------
@@ -503,7 +503,7 @@ newtype Trans a = Trans { unTrans :: State TransState a }
   deriving (Functor, Applicative, Monad, MonadFix)
 
 -- transFix :: (a -> Trans a) -> Trans a
--- transFix f = let Trans s = 
+-- transFix f = let Trans s =
 
 data TransState = TransState
   { tsUniques :: Supply Unique
@@ -622,7 +622,7 @@ updateItblLoc :: KnownLocs -> CoreBndr -> ValueLocation -> KnownLocs
 updateItblLoc (KnownLocs env denv) x l = KnownLocs env (Ghc.extendVarEnv denv x l)
 
 extendLocs :: KnownLocs -> [(CoreBndr, ValueLocation)] -> KnownLocs
-extendLocs (KnownLocs env denv) xls = 
+extendLocs (KnownLocs env denv) xls =
   KnownLocs (Ghc.extendVarEnvList env xls) denv
 
 noLocs :: KnownLocs
@@ -708,7 +708,7 @@ contextVar RetC = Nothing
 contextVar (BindC mx) = mx
 
 
-data FreeVars = FreeVars 
+data FreeVars = FreeVars
   { closureVars :: Ghc.VarSet  -- ^ Closure variables for this BCO
   , globalVars  :: S.Set Id  -- ^ References to global vars from this BCO.
   }
@@ -731,7 +731,7 @@ freshVar nm f = do
 
 mbFreshLocal :: Ghc.Type -> Maybe BcVar -> Trans BcVar
 mbFreshLocal _ (Just v) = return v
-mbFreshLocal t Nothing = freshVar "%" (\n -> BcVar (mkLocalId n) t) 
+mbFreshLocal t Nothing = freshVar "%" (\n -> BcVar (mkLocalId n) t)
 
 -- | Create a new local 'Id' from a 'Ghc.Id'.
 internCoreBndr :: CoreBndr -> Trans Id
@@ -798,7 +798,7 @@ transBody (Ghc.Case scrut@(Ghc.App _ _) bndr alt_ty alts) env0 fvi locs0 ctxt
        bndr
        alt_ty
        alts
- 
+
 transBody (Ghc.Case scrut bndr ty alts) env0 fvi locs0 ctxt =
   transCase scrut bndr ty alts env0 fvi locs0 ctxt
 
@@ -866,9 +866,9 @@ transVar ::
      -- ^ Returns:
      --
      -- * The instructions to load the variable
-     -- 
+     --
      -- * The register it has been loaded into
-     -- 
+     --
      -- * @True <=>@ the variable is known to be in WHNF (e.g., a
      -- top-level function).
      --
@@ -989,7 +989,7 @@ transApp f args env fvi locs0 ctxt
                    splitFunTysN 1 (repType (Ghc.varType f))
              result <- mbFreshLocal result_type (contextVar ctxt)
              maybeAddRet ctxt (is0 <*> insMove result reg) locs1 fvs result
-             
+
          _ | Just (op, arg_tys, res_ty) <- primOpOther p
            -> do
              let arity = length arg_tys
@@ -1023,7 +1023,7 @@ transApp f args env fvi locs0 ctxt
            let typed_regs = [ BcReg n (transType (bcVarType r))
                             | (n,r) <- zip [0..] regs ]
                is = is2 <*>
-                      catGraphs [ insMove tr r 
+                      catGraphs [ insMove tr r
                                 | (tr,r) <- zip typed_regs regs ]
                ins = is <*> insCall Nothing fr typed_regs
            in
@@ -1086,7 +1086,7 @@ transStore dcon0 args env fvi locs0 ctxt
         (bcis, locs, fvs, vars0) <- transArgs args env fvi locs0
         let vars = removeIf isVoid vars0
         case vars of
-          [res] -> 
+          [res] ->
             return (bcis <*> insRet1 res, locs, fvs, Nothing)
           (_:_:_) -> do
             let
@@ -1100,7 +1100,7 @@ transStore dcon0 args env fvi locs0 ctxt
 
 transStore dcon args env fvi locs0 ctxt = do
   (bcis0, locs1, fvs, regs) <- transArgs args env fvi locs0
-  
+
   (bcis1, con_reg, locs2, fvs')
     <- loadDataCon dcon env fvi locs1 (contextVar ctxt)
   let Just (arg_tys, rslt_ty) =
@@ -1158,7 +1158,7 @@ transCase :: forall x.
 
 -- Only a single case alternative.  This is just EVAL(bndr) and
 -- possibly matching on the result.
-transCase scrut bndr alt_ty [(altcon, vars, body)] env0 fvi locs0 ctxt 
+transCase scrut bndr alt_ty [(altcon, vars, body)] env0 fvi locs0 ctxt
  | DataAlt con <- altcon, Ghc.isUnboxedTupleCon con
  = do
   let nonVoidVars = removeIf isGhcVoid vars
@@ -1189,7 +1189,7 @@ transCase scrut bndr alt_ty [(altcon, vars, body)] env0 fvi locs0 ctxt
       (bcis', locs4, fvs1, mb_r) <- transBody body env' fvi locs3 ctxt
       return (bcis <*> catGraphs bcis1 <*> bcis', locs4,
               fvs0 `mappend` fvs1, mb_r)
-      
+
  | otherwise
  = do
   (bcis, locs1, fvs0, Just r) <- transBody scrut env0 fvi locs0 (BindC Nothing)
@@ -1550,7 +1550,7 @@ isCondPrimOp primop =
 -- >      forall a b. m a -> (a -> m b) -> m b
 --
 -- For the expression:
--- 
+--
 -- > GHC.Base.>>= @ m $dMonad @ a @ b m sat_saP
 --
 -- this function will return

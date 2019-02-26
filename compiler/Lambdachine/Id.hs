@@ -1,7 +1,7 @@
-module Lambdachine.Id 
+module Lambdachine.Id
   ( module Lambdachine.Name
   , module Lambdachine.Id
-  ) 
+  )
 where
 
 import Lambdachine.Utils

@@ -72,7 +72,7 @@ d x = ()
 -- z :: Int -> Int
 -- z x = plusInt x (plusInt x x)
 
---sum :: 
+--sum ::
 
 
 -- i42 = I# 42#

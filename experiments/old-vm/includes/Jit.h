@@ -21,8 +21,8 @@
 typedef u2 HotCount;
 
 // Number of hot counter hash table entries (power of two)
-#define HOTCOUNT_SIZE		64
-#define HOTCOUNT_PCMASK		((HOTCOUNT_SIZE-1)*sizeof(HotCount))
+#define HOTCOUNT_SIZE           64
+#define HOTCOUNT_PCMASK         ((HOTCOUNT_SIZE-1)*sizeof(HotCount))
 // Initial value of hot counter.  Need data to figure out default.
 // Will be customisable one day.
 #define HOTCOUNT_DEFAULT        7
@@ -62,16 +62,16 @@ typedef u4 SnapEntry;
 #define snap_ref(sn)            ((sn) & 0xffff)
 #define snap_slot(sn)           (cast(i2, ((sn) >> 16)))
 
-/* 
+/*
  * Heap Info
  * ---------
  *
  * The heap info is an abstraction for the contents of the heap.  Heap
  * info entries are initialised when an object is allocated and will
- * not be modified after that.  To support UPDATE operations, a special field 
+ * not be modified after that.  To support UPDATE operations, a special field
  * is reserved to point to the new new value if needed.
  *
- * 
+ *
  */
 
 typedef IRRef1 HeapEntry;
@@ -154,22 +154,22 @@ typedef struct _FoldState {
 
 /* Optimization parameters and their defaults. Length is a char in octal! */
 #define JIT_PARAMDEF(_) \
-  _(\011, enableasm,	 0)	/* Generate machine code for traces. */ \
+  _(\011, enableasm,     0)     /* Generate machine code for traces. */ \
   _(\012, enableside,    0)     /* Enable side traces. */ \
   /* Size of each machine code area (in KBytes). */ \
-  _(\011, sizemcode,	64) \
+  _(\011, sizemcode,    64) \
   /* Max. total size of all machine code areas (in KBytes). */ \
-  _(\010, maxmcode,	512) \
+  _(\010, maxmcode,     512) \
   /* End of list. */
 
 enum {
-#define JIT_PARAMENUM(len, name, value)	JIT_P_##name,
+#define JIT_PARAMENUM(len, name, value) JIT_P_##name,
 JIT_PARAMDEF(JIT_PARAMENUM)
 #undef JIT_PARAMENUM
   JIT_P__MAX
 };
-#define JIT_PARAMSTR(len, name, value)	#len #name
-#define JIT_P_STRING	JIT_PARAMDEF(JIT_PARAMSTR)
+#define JIT_PARAMSTR(len, name, value)  #len #name
+#define JIT_P_STRING    JIT_PARAMDEF(JIT_PARAMSTR)
 
 // -- Optimisations --------------------------------------------------
 
@@ -218,7 +218,7 @@ typedef struct _JitState {
   u1 maxslot;   // size of the current frame
                    // INVARIANT: baseslot + maxslot < MAX_SLOTS
   u1 minslot;   // index into slot, INV: minslot >= 0 && minslot < baseslot
-  u4 framesize;	   /* Max. stack used by this trace. */
+  u4 framesize;    /* Max. stack used by this trace. */
   TRef last_result;
   u4 flags;
   u4 mode;
@@ -272,21 +272,21 @@ typedef struct _JitState {
 
   MCode *exitstubgroup[LC_MAX_EXITSTUBGR];  /* Exit stub group addresses. */
 
-  int mcprot;		/* Protection of current mcode area. */
-  MCode *mcarea;	/* Base of current mcode area. */
-  MCode *mctop;		/* Top of current mcode area. */
-  MCode *mcbot;		/* Bottom of current mcode area. */
-  size_t szmcarea;	/* Size of current mcode area. */
-  size_t szallmcarea;	/* Total size of all allocated mcode areas. */
+  int mcprot;           /* Protection of current mcode area. */
+  MCode *mcarea;        /* Base of current mcode area. */
+  MCode *mctop;         /* Top of current mcode area. */
+  MCode *mcbot;         /* Bottom of current mcode area. */
+  size_t szmcarea;      /* Size of current mcode area. */
+  size_t szallmcarea;   /* Total size of all allocated mcode areas. */
 
-  uint32_t prngstate;	/* PRNG state. */
+  uint32_t prngstate;   /* PRNG state. */
 
   Word optimizations;
   int32_t param[JIT_P__MAX];  /* JIT engine parameters. */
 } JitState;
 
 #define LOG_JIT(J, ...) \
-  do { if ((J)->loghandle) { fprintf((J)->loghandle, __VA_ARGS__); } }	\
+  do { if ((J)->loghandle) { fprintf((J)->loghandle, __VA_ARGS__); } }  \
   while(0)
 
 /* Trivial PRNG e.g. used for penalty randomization. */
@@ -321,7 +321,7 @@ INLINE_HEADER FragmentId getFragmentId(RecordResult r) { return (u4)r >> 8; }
 
 void initJitState(JitState *J, const Opts* opts);
 LC_FASTCALL void startRecording(JitState *J, BCIns *, Thread *, Word *base,
-				TraceType type);
+                                TraceType type);
 LC_FASTCALL void
 startRecordingSideTrace(JitState *J, Thread *T, Word *base,
                         Fragment *parent, uint32_t exitno);
@@ -424,7 +424,7 @@ findPhi(JitState *J, IRRef ref)
 {
   if (ref < REF_BIAS || ref >= J->cur.nloop || !irt_getphi(J->cur.ir[ref].t))
     return 0;
-  
+
   return findPhi_aux(J, ref);
 }
 

@@ -57,12 +57,12 @@ delNode k graph | Just node <- lookupNode k graph =
     -- delete conflict edges from other nodes to this one.
     graph1 =
       foldl' (\g k1 -> let Just g' = delConflict k1 k g in g') graph
-	   $ toList (nodeConflicts node)
+           $ toList (nodeConflicts node)
 
     -- delete coalesce edge from other nodes to this one.
     graph2 =
       foldl' (\g k1 -> let Just g' = delCoalesce k1 k g in g') graph1
-	   $ toList (nodeCoalesce node)
+           $ toList (nodeCoalesce node)
 
     -- delete the node
     graph3 = graph2{ graphMap = deleteUM k (graphMap graph2) }
@@ -75,8 +75,8 @@ delNode k graph | Just node <- lookupNode k graph =
 --
 modNode :: Uniquable k =>
            k
-	-> (Node k cls colour -> Node k cls colour)
-	-> Graph k cls colour -> Maybe (Graph k cls colour)
+        -> (Node k cls colour -> Node k cls colour)
+        -> Graph k cls colour -> Maybe (Graph k cls colour)
 modNode k f graph =
   case lookupNode k graph of
     Nothing -> Nothing
@@ -142,7 +142,7 @@ addConflicts conflictSet getClass graph
 -- Returns 'Nothing' if the node isn't in the graph.
 delConflict :: Uniquable k =>
                k -> k
-	    -> Graph k cls colour -> Maybe (Graph k cls colour)
+            -> Graph k cls colour -> Maybe (Graph k cls colour)
 delConflict k1 k2 =
   modNode k1 $ \node ->
     node{ nodeConflicts = deleteUS k2 (nodeConflicts node) }
@@ -168,7 +168,7 @@ addCoalesce (u1, c1) (u2, c2) graph =
 -- | Delete a coalescence edge (@k1 -> k2@) from the graph.
 delCoalesce :: Uniquable k =>
                k -> k
-	    -> Graph k cls colour -> Maybe (Graph k cls colour)
+            -> Graph k cls colour -> Maybe (Graph k cls colour)
 delCoalesce k1 k2 =
   modNode k1 $ \node ->
     node{ nodeCoalesce = deleteUS k2 (nodeCoalesce node) }
@@ -280,7 +280,7 @@ coalesceGraph' env aggressive triv graph kkPairsAcc =
     -- Build a list of pairs of keys for node's we'll try and
     -- coalesce.  Every pair of nodes will appear twice in this list.
     --
-    --	ie [(k1, k2), (k2, k1) ... ]
+    --  ie [(k1, k2), (k2, k1) ... ]
     --
     -- This is ok, GrapOps.coalesceNodes handles this and it's
     -- convenient for build a list of what nodes get coalesced
@@ -288,15 +288,15 @@ coalesceGraph' env aggressive triv graph kkPairsAcc =
     --
     cList =
       [ (nodeId node1, k2)
-	  | node1 <- cNodes
+          | node1 <- cNodes
           , k2 <- toList $ nodeCoalesce node1 ]
 
     -- do the coalescing, returning the new graph and a list of pairs of keys
-    --	that got coalesced together.
+    --  that got coalesced together.
     (graph', mPairs)
       = mapAccumL (coalesceNodes env aggressive triv) graph cList
 
-	-- keep running until there are no more coalesces can be found
+        -- keep running until there are no more coalesces can be found
    in
      case catMaybes mPairs of
        [] ->
@@ -367,24 +367,24 @@ coalesceNodes_merge env aggressive triv graph kMin kMax nMin nMax
   = let
       -- the new node gets all the edges from its two components
       node =
-	Node { nodeId = kMin
-	     , nodeClass  = nodeClass nMin
-	     , nodeColour = nodeColour nMin
-	       -- nodes don't conflict with themselves..
-	     , nodeConflicts =
-	         deleteUS kMin $ deleteUS kMax $
+        Node { nodeId = kMin
+             , nodeClass  = nodeClass nMin
+             , nodeColour = nodeColour nMin
+               -- nodes don't conflict with themselves..
+             , nodeConflicts =
+                 deleteUS kMin $ deleteUS kMax $
                  nodeConflicts nMin `mappend` nodeConflicts nMax
 
-	     , nodeExclusions =
+             , nodeExclusions =
                  nodeExclusions nMin `mappend` nodeExclusions nMax
 
-	     , nodePreference =
+             , nodePreference =
                  nodePreference nMin ++ nodePreference nMax
 
-	        -- nodes don't coalesce with themselves..
-	     , nodeCoalesce =
+                -- nodes don't coalesce with themselves..
+             , nodeCoalesce =
                  deleteUS kMin $ deleteUS kMax $
-	         nodeCoalesce nMin `mappend` nodeCoalesce nMax
+                 nodeCoalesce nMin `mappend` nodeCoalesce nMax
              }
     in
       coalesceNodes_check env aggressive triv graph kMin kMax node

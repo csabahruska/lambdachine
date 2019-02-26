@@ -32,7 +32,7 @@ instance MonadPlus P where
 
   -- most common case: two gets are combined
   Get f1     `mplus` Get f2     = Get (\c -> f1 c `mplus` f2 c)
-  
+
   -- results are delivered as soon as possible
   Result x p `mplus` q          = Result x (p `mplus` q)
   p          `mplus` Result x q = Result x (p `mplus` q)

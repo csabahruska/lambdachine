@@ -7,7 +7,7 @@
 --   arising from the literal `42'
 -- Possible fix: add an instance declaration for (GHC.Num.Num Int)
 -- In the expression: 42
--- In an equation for `test': test = 42 
+-- In an equation for `test': test = 42
 -- XFAIL: *
 module Bc.Bc0006 where
 

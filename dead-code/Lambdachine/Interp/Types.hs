@@ -149,7 +149,7 @@ data Snapshot = Snapshot
   , snap_heap :: M.Map TRef (Int, IM.IntMap TRef)
   , snap_esc :: S.Set BcVar
   , snap_loc :: (InfoTable, Int)
-  } 
+  }
  | ProtoSnapshot { snap_esc :: S.Set BcVar, snap_loc :: (InfoTable, Int) }
  deriving Eq
  -- TODO: rename snap_esc into snap_lives or snap_liveOuts
@@ -213,7 +213,7 @@ instance Biplate (IRIns_ TRef) TRef where
 
 instance Biplate Snapshot TRef where
   biplate s =
-    plate (\slots' heap' -> 
+    plate (\slots' heap' ->
              s{ snap_slots = slots'
               , snap_heap = M.fromList heap' })
       |+ snap_slots s ||+ M.toAscList (snap_heap s)
@@ -333,7 +333,7 @@ instance Pretty ref => Pretty (IRIns_ ref) where
   ppr (Op OpDiv l r)    = text "DIV     " <+> ppr l <+> ppr r
   ppr (Op cmp l r)      = text "SET" <> ppr cmp <+> ppr l <+> ppr r
   ppr (Guard cmp l r s) = align ({-ppr s $+$-} pp_cmp cmp <+> ppr l <+> ppr r)
-   where 
+   where
      pp_cmp CmpEq = text "EQ      "
      pp_cmp CmpNe = text "NE      "
      pp_cmp CmpLt = text "LT      "
@@ -346,7 +346,7 @@ instance Pretty ref => Pretty (IRIns_ ref) where
   ppr (UpdateR dst src)  = text "UPDATE  " <+> ppr dst <+> ppr src
   ppr (Phi x y)          = text "PHI     " <+> ppr x <+> ppr y
   ppr (PushFrame ret node sz lvs) =
-    text "(frame) " <+> ppr ret <+> ppr node <+> ppr sz <+> 
+    text "(frame) " <+> ppr ret <+> ppr node <+> ppr sz <+>
          brackets (hsep (commaSep (map ppr lvs)))
   ppr PopFrame = text "(popfrm)"
 
@@ -365,7 +365,7 @@ opName CmpGe = "GE"
 instance Pretty Snapshot where
   ppr (ProtoSnapshot esc _) =
     text "<proto-snap>, Esc=" <> braces (hsep (commaSep (map ppr (S.toList esc))))
-  ppr snap = 
+  ppr snap =
     indent 4 (pp_slots (snap_slots snap) <> char '}' $+$
                         pp_heap (M.toList $ snap_heap snap)) $+$
       text "Live=" <> braces (hsep (commaSep (map ppr (S.toList (snap_esc snap))))) $+$
@@ -380,14 +380,14 @@ instance Pretty Snapshot where
      in collect' (text "Slots: {" <> ppr slot_low <> char ':')
                  [slot_low..slot_hi] $ \doc s ->
           doc <>
-          (if s == base then char '|' else 
+          (if s == base then char '|' else
              if s `mod` 5 == 0 then char '.' else char ' ') <>
           (maybe (text "-----") ppr (IM.lookup s slots))
 
 instance Pretty Trace where
   ppr (Trace irs_ _) =
     let inss = zip [1..] (V.toList irs_) in
-    text "Trace {" 
+    text "Trace {"
     $+$ vcat (map (\(i, ins) -> ppFill 4 i <+> ppr ins) inss)
     $+$ text "}"
 
@@ -399,7 +399,7 @@ pp_heap objs =
                      d <+> maybe (text "----") ppr (IM.lookup i fields))
                <+> char '}'
 
-  
+
 instance Pretty TConst where
   ppr (TCInt n) | n >= 0 = char '+' <> ppr n
                 | otherwise = ppr n
@@ -502,7 +502,7 @@ loadBCOs :: FinalBCOs -> (InfoTables, Heap)
 loadBCOs bcos =
   foldl' load1 (M.empty, Heap M.empty IM.empty 0) (M.toList bcos)
  where
---   load1 :: 
+--   load1 ::
    load1 (itbls, heap) (x, BcConInfo{ bcoConTag = tag }) =
      (M.insert (ItblId x) (ConstrInfoTable (ItblId x) tag) itbls, heap)
    load1 (itbls, heap) (x, bco@BcoCon{}) =

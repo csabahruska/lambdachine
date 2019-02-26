@@ -1,6 +1,6 @@
 {-# LANGUAGE BangPatterns, CPP #-}
 {-# OPTIONS -fno-cse #-}
-module Ghc.Api.Pipeline 
+module Ghc.Api.Pipeline
   ( Source(..),
     compileFiles,
     compileFile,

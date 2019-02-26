@@ -36,7 +36,7 @@ VMState *create_thread(GblState *gbl)
   // TODO: allocate everything on the GC'd heap
   VMState *vms = malloc(sizeof(VMState));
   StgWord *stack = malloc(DEFAULT_STACK_SIZE * sizeof(StgWord));
-  
+
   vms->gbl_state = gbl;
   vms->saved_cstack = 0; // set by interpreter
   vms->stack = stack;
@@ -46,7 +46,7 @@ VMState *create_thread(GblState *gbl)
   vms->base = stack + 1;
   vms->top = stack + 1;
   stack[0] = cast(StgWord, gbl->entry_closure);
-  
+
   return vms;
 }
 
@@ -80,8 +80,8 @@ void lc_pushptr(VMState *L, void *p)
 {
   if (L->top >= L->stack_limit)
     lc_stackoverflow();
-  
-  *(L->top)++ = cast(StgWord, p);  
+
+  *(L->top)++ = cast(StgWord, p);
 }
 
 void lc_printstate(VMState *L)
@@ -144,14 +144,14 @@ void test1() {
   testcode[8] = BCINS_AD(OP_EXIT, 0, 0);
 
   print_bytecode(testcode);
-  
+
 /*   printf("%p\n", vm_leave); */
   printf("Dispatch Table: %p\n", gbl.dispatch_tbl);
   //  c = getc(stdin);
 
   //  printf("vm: %" FMT_WordX "\n", vm_enter(gbl.dispatch_tbl, 0, L->base, testcode));
   //printf("acc: %x\n", vm_bench(count));
-  
+
   lc_printstate(L);
 
   destroy_thread(L);

@@ -115,7 +115,7 @@ initBasepath(BasePathEntry **basepaths, Opts *opts)
     path_end = strchr(path, ':');
     path_len = (path_end != NULL) ? path_end - path : strlen(path);
     int is_last_path = path_end == NULL;
-    
+
     if (path_len == 0) {
       if (is_last_path) {
         // Add default path (current working directory)
@@ -289,11 +289,11 @@ findModule(const char *moduleName)
   char  *filename;
   char   base[PATH_MAX];
   BasePathEntry *b = G_loader->basepaths;
-  
+
   while (b) {
     // 1. Try to find module in base directory
     filename = moduleNameToFile(b->path, moduleName);
-    
+
     fprintf(stderr, ".. Searching for `%s' in `%s'\n", moduleName, filename);
 
     if (fileExists(filename)) {
@@ -685,21 +685,21 @@ loadLiteral(const char *filename,
       InfoTable *info = HashTable_lookup(itbls, infoname);
       FwdRefInfoTable *info2;
       if (info == NULL) {
-	// 1st forward ref
-	info2 = xmalloc(sizeof(FwdRefInfoTable));
-	info2->i.type = INVALID_OBJECT;
-	info2->next = (void**)literal;
-	*literal = (Word)NULL;
-	HashTable_insert(itbls, infoname, info2);
+        // 1st forward ref
+        info2 = xmalloc(sizeof(FwdRefInfoTable));
+        info2->i.type = INVALID_OBJECT;
+        info2->next = (void**)literal;
+        *literal = (Word)NULL;
+        HashTable_insert(itbls, infoname, info2);
       } else if (info->type == INVALID_OBJECT) {
-	// subsequent forward ref
-	info2 = (FwdRefInfoTable*)info;
-	*literal = (Word)info2->next;
-	info2->next = (void**)literal;
-	xfree(infoname);
+        // subsequent forward ref
+        info2 = (FwdRefInfoTable*)info;
+        *literal = (Word)info2->next;
+        info2->next = (void**)literal;
+        xfree(infoname);
       } else {
-	*literal = (Word)info;
-	xfree(infoname);
+        *literal = (Word)info;
+        xfree(infoname);
       }
     }
     break;

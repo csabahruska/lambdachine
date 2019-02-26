@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# OPTIONS_GHC -fno-cse -fno-full-laziness -fno-strictness #-}
-module Lambdachine.Options 
+module Lambdachine.Options
   ( Options(..),  getOptions )
 where
 
@@ -30,4 +30,4 @@ getOptions = do
   opts <- cmdArgs options
   let level = max 0 (min 2 (optLevel opts))
   return opts{ optLevel = level }
-            
+

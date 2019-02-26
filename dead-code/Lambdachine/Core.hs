@@ -132,7 +132,7 @@ ppr_expr add_par (Let bind expr) =
   add_par $
   sep [sep [keyword "let" <+> ppr_bind bind, keyword "in"]
       ,nest 2 (ppr expr)]
-  
+
 -- PRE: binding non-empty
 ppr_bind :: Pretty b => Bind b -> PDoc
 ppr_bind bind =
@@ -140,13 +140,13 @@ ppr_bind bind =
     NonRec var expr ->
       align $ ppr_one_bind (var, expr)
     Rec binds ->
-      keyword "rec" <$> indent 2 
+      keyword "rec" <$> indent 2
       (let (b:bs) = map ppr_one_bind binds in
         sep ((char '{' <+> b) : map (char ';' <+>) bs)) <+> char '}'
  where
    ppr_one_bind (var, expr) =
      hang 2 (ppr var <+> char '=' </> ppr expr)
-  
+
 
 tst1 :: Expr Id
 tst1 = let x = Id "x"; y = Id "y"; z = Id "z" in
@@ -155,6 +155,6 @@ tst1 = let x = Id "x"; y = Id "y"; z = Id "z" in
 
 tst2 :: Expr Id
 tst2 = let x = Id "x"; y = Id "y"; z = Id "z" in
-       letrec [(x ,Var (Id "unotahunaoheusnaheuntahuosetnaosehuonsahuo")) 
+       letrec [(x ,Var (Id "unotahunaoheusnaheuntahuosetnaosehuonsahuo"))
               ,(y, Lit (IntLit 42))]
          (Var z)

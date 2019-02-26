@@ -50,7 +50,7 @@ printClosure_(FILE *f, Closure* cl, int nl)
   for (n = info->layout.payload.nptrs; n > 0; p++, n--)
     printf("%" FMT_Int " ", cl->payload[p]);
   */
-  if (nl) 
+  if (nl)
     fputc('\n', f);
 }
 
@@ -151,7 +151,7 @@ printInstruction_aux(FILE *stream, const BCIns *ins /*in*/, int oneline)
       }
       break;
     case BC_CALLT:
-      { 
+      {
         int j;
         u1 bitmask = bc_b(i);
         fprintf(stream, "CALLT r%d", bc_a(i));
@@ -300,10 +300,10 @@ printCode(FILE *stream, LcCode *code)
       break;
     case LIT_CHAR:
       { Word c = code->lits[i];
-	if (c < 256)
-	  fprintf(stream, "'%c'", (char)c);
-	else
-	  fprintf(stream, "u%xd", (u4)c);
+        if (c < 256)
+          fprintf(stream, "'%c'", (char)c);
+        else
+          fprintf(stream, "u%xd", (u4)c);
       }
       break;
     case LIT_STRING:

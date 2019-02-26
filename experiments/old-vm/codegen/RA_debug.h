@@ -38,23 +38,23 @@ static void ra_dprintf(ASMState *as, const char *fmt, ...)
     if (e[1] == 'r') {
       Reg r = va_arg(argp, Reg) & RID_MASK;
       if (r <= RID_MAX) {
-	const char *q;
-	for (q = ra_regname[r]; *q; q++)
-	  *p++ = *q >= 'A' && *q <= 'Z' ? *q + 0x20 : *q;
+        const char *q;
+        for (q = ra_regname[r]; *q; q++)
+          *p++ = *q >= 'A' && *q <= 'Z' ? *q + 0x20 : *q;
       } else {
-	*p++ = '?';
-	LC_ASSERT(0);
+        *p++ = '?';
+        LC_ASSERT(0);
       }
     } else if (e[1] == 'f' || e[1] == 'i') {
       IRRef ref;
       if (e[1] == 'f')
-	ref = va_arg(argp, IRRef);
+        ref = va_arg(argp, IRRef);
       else
-	ref = va_arg(argp, IRIns *) - as->ir;
+        ref = va_arg(argp, IRIns *) - as->ir;
       if (ref >= REF_BIAS)
-	p += sprintf(p, "%04d", ref - REF_BIAS);
+        p += sprintf(p, "%04d", ref - REF_BIAS);
       else
-	p += sprintf(p, "K%03d", REF_BIAS - ref);
+        p += sprintf(p, "K%03d", REF_BIAS - ref);
     } else if (e[1] == 's') {
       uint32_t slot = va_arg(argp, uint32_t);
       p += sprintf(p, "[sp+0x%lx]", sps_scale(slot));
@@ -76,17 +76,17 @@ static void ra_dprintf(ASMState *as, const char *fmt, ...)
   ra_dbg_p = p;
 }
 
-#define RA_DBG_START()	ra_dstart()
-#define RA_DBG_FLUSH()	ra_dflush()
+#define RA_DBG_START()  ra_dstart()
+#define RA_DBG_FLUSH()  ra_dflush()
 #define RA_DBG_REF() \
   do { char *_p = ra_dbg_p; ra_dprintf(as, ""); \
        ra_dbg_merge = _p; ra_dbg_mcp = as->mcp; } while (0)
-#define RA_DBGX(x)	ra_dprintf x
+#define RA_DBGX(x)      ra_dprintf x
 
 #else
-#define RA_DBG_START()	((void)0)
-#define RA_DBG_FLUSH()	((void)0)
-#define RA_DBG_REF()	((void)0)
-#define RA_DBGX(x)	((void)0)
+#define RA_DBG_START()  ((void)0)
+#define RA_DBG_FLUSH()  ((void)0)
+#define RA_DBG_REF()    ((void)0)
+#define RA_DBGX(x)      ((void)0)
 #endif
 

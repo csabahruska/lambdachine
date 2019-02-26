@@ -13,7 +13,7 @@ testE prob =
   case readM prob of
     Err err -> "ERROR: " ++ err
     Ans (Equation (t0, t1)) ->
-      unlines 
+      unlines
         [ "Problem:   " ++ show (Equation (t0, t1))
         , "Unifier:   " ++ show (unify (Equation (t0, t1)))
         , "Matcher:   " ++ (case match (Equation (t0, t1)) of

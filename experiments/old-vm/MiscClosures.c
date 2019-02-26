@@ -62,7 +62,7 @@ info table.
 
 // Indirections are currently followed by EVAL code, so we don't need
 // any bytecode for it.
-// 
+//
 //static BCIns ind_code_insts[] =
 //  { BCINS_AD(BC_LOADFV, 0, 0), // r0 = Node[0]
 //    BCINS_AD(BC_RET1, 0, 0)    // return r0
@@ -260,10 +260,10 @@ initUpdateClosure(void)
   info->code.lits = NULL;
   info->code.littypes = NULL;
   info->code.code = xmalloc(info->code.sizecode * sizeof(BCIns) +
-			    info->code.sizebitmaps * sizeof(u2));
+                            info->code.sizebitmaps * sizeof(u2));
   BCIns *code = info->code.code;
   u2 *bitmasks = cast(u2*, code + info->code.sizecode);
-  
+
   // The EVAL instructions isn't actually executed.  It is only there to
   // attach the bitmap to describe the stack frame.
 
@@ -306,14 +306,14 @@ void initStopClosure()
   info->code.lits = NULL;
   info->code.littypes = NULL;
   info->code.code = xmalloc(info->code.sizecode * sizeof(BCIns) +
-			    info->code.sizebitmaps * sizeof(u2));
+                            info->code.sizebitmaps * sizeof(u2));
   BCIns *code = info->code.code;
   u2 *bitmasks = cast(u2*, code + info->code.sizecode);
-  
+
   code[0] = BCINS_AD(BC_EVAL, 0, 0),   // eval r0 ; is r0 live here?
   code[1] = cast(BCIns, byte_offset(&code[1], bitmasks));
   code[2] = BCINS_AD(BC__MAX, 0, 0);   // stop execution
- 
+
   bitmasks += encodeBitmask(bitmasks, 1); // reg 0 is a pointer
   bitmasks += encodeBitmask(bitmasks, 1); // reg 0 is live
 
@@ -363,7 +363,7 @@ getApContClosure(Closure **res_clos, BCIns **res_pc,
   char *p;
 
   if (LC_UNLIKELY(apk_info[idx].clos == NULL)) {
-    
+
     ApContInfoTable *info = allocInfoTable(wordsof(ApContInfoTable));
     info->i.type = AP_CONT;
     info->i.size = nargs;
@@ -371,7 +371,7 @@ getApContClosure(Closure **res_clos, BCIns **res_pc,
     info->i.layout.bitmap = pointer_mask;
 
     u4 livemask = (1u << nargs) - 1;
-    
+
     p = buf;
     p += sprintf(p, "stg_ApK%d_", nargs);
     p += formatBitmask(p, nargs, pointer_mask);
@@ -406,9 +406,9 @@ getApContClosure(Closure **res_clos, BCIns **res_pc,
     apk_info[idx].clos = cl;
     apk_info[idx].return_pc = &code[3];
   }
-  
+
   *res_clos = apk_info[idx].clos;
-  *res_pc = apk_info[idx].return_pc;  
+  *res_pc = apk_info[idx].return_pc;
 }
 
 InfoTable *
@@ -428,7 +428,7 @@ getApInfoTable(int nargs, u4 pointer_mask)
     // the function itself is always a pointer.
     info->i.tagOrBitmap = (pointer_mask << 1) | 1u;
     info->i.layout.bitmap = (pointer_mask << 1) | 1u;
-    
+
     char *p = buf;
     p += sprintf(p, "stg_Ap%d_", nargs);
     p += formatBitmask(p, nargs, pointer_mask);
@@ -460,13 +460,13 @@ getApInfoTable(int nargs, u4 pointer_mask)
       code[5 + i] = BCINS_AD(BC_LOADFV, i, i + 2);
     }
     code[5 + nargs] = BCINS_ABC(BC_CALLT, nargs, pointer_mask, nargs);
-    
+
     ap_itbls[idx] = cast(InfoTable*, info);
   }
 
   return ap_itbls[idx];
 }
- 
+
 void
 dumpApClosures(void)
 {

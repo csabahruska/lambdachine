@@ -86,9 +86,9 @@ main(int argc, char *argv[])
       break;
     case OPT_PRINT_LOADER_STATE:
       if (optarg == NULL) {
-	opts.print_loader_state = "";
+        opts.print_loader_state = "";
       } else {
-	opts.print_loader_state = optarg;
+        opts.print_loader_state = optarg;
       }
       break;
     case 'e':
@@ -102,8 +102,8 @@ main(int argc, char *argv[])
     case 's':
       opts.stack_size = parseMemorySize(optarg);
       if (opts.stack_size < 0) {
-	fprintf(stderr, "Could not parse stack size.  Using default.\n");
-	opts.stack_size = MIN_STACK_SIZE;
+        fprintf(stderr, "Could not parse stack size.  Using default.\n");
+        opts.stack_size = MIN_STACK_SIZE;
       }
       break;
     case 'S':
@@ -129,7 +129,7 @@ main(int argc, char *argv[])
              "     --asm        Generate native code.\n"
              "  -B --base       Set loader base dir (default: cwd).\n"
              "                  Separate multiple paths with \":\""
-	     "     --stack=SIZE Specify the stack size in bytes, valid units are K,M,b,G.\n"
+             "     --stack=SIZE Specify the stack size in bytes, valid units are K,M,b,G.\n"
              "\n",
              argv[0]);
       exit(0);
@@ -199,9 +199,9 @@ main(int argc, char *argv[])
     if (*opts.print_loader_state != '\0') {
       out = fopen(opts.print_loader_state, "w");
       if (out == NULL) {
-	fprintf(stderr, "Could not write to file: %s",
-		opts.print_loader_state);
-	exit(1);
+        fprintf(stderr, "Could not write to file: %s",
+                opts.print_loader_state);
+        exit(1);
       }
     } else {
       out = stderr;
@@ -217,7 +217,7 @@ main(int argc, char *argv[])
     return 0;
 
   fprintf(stderr, "----------------------------------------------------\n"
-	 "Loaded %s, now evaluating '%s'\n", opts.input_file, opts.main_closure);
+         "Loaded %s, now evaluating '%s'\n", opts.input_file, opts.main_closure);
 
   clos0 = lookupClosure(opts.main_closure);
   if (clos0 == NULL) {
@@ -281,7 +281,7 @@ parseMemorySize(const char *str)
   }
 
   ans = strtol(str, &end, 10);
-  if (end == str) {		/* No parse */
+  if (end == str) {             /* No parse */
     return -1;
   }
 

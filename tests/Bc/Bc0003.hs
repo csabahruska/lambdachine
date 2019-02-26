@@ -12,8 +12,8 @@ data List a = Nil | Cons a (List a)
 mapPlusOne :: List Int -> List Int
 mapPlusOne l = go l
  where go Nil = Nil
-       go (Cons x xs) = 
-         let !y = plusOne x in 
+       go (Cons x xs) =
+         let !y = plusOne x in
          Cons y (go xs)
 
 plusOne :: Int -> Int

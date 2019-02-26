@@ -23,18 +23,18 @@ int MMState_init(MMState* state, StgWord heap_size)
 {
   StgPtr heap;
   StgWord space_size;
-  
+
   assert(heap_size >= 1024 * sizeof(StgWord));
 
   // heap_size should be a multiple of sizeof(StgWord)
   heap_size = heap_size & ~((1 << LC_ALIGN_LOG2) - 1);
-  
+
   heap = (StgPtr)malloc(heap_size);
   if (!heap)
     return ENOMEM;
 
   space_size = heap_size >> 1;
-  
+
   state->heap_bottom = heap;
   state->heap_size = heap_size;
   state->Hp = heap;
@@ -65,13 +65,13 @@ int flip(MMState* state)
   return 0;
   /*
   StgPtr old_Hp;
-  
+
   old_Hp = state->Hp;
   state->Hp = state->from_space;
   state->from_space = old_Hp;
 
   evac(state, state->root);
-  
+
   return 0;
   */
 }
@@ -82,7 +82,7 @@ int flip(MMState* state)
 #define CONSTR_2_0              4
 #define CONSTR_1_1              5
 #define CONSTR_0_2              6
-#define CONSTR_STATIC	        7
+#define CONSTR_STATIC           7
 
 int evac(MMState* state, StgPtr object)
 {
@@ -97,14 +97,14 @@ int evac(MMState* state, StgPtr object)
   new_object[0] = object[0];
 
   // Overwrite the old info table with a forwarding pointer.
-  // This 
+  // This
   object[0] = (StgPtr)((StgWord)new_object | 1);
-  
+
   // copy object
   for (i = 1; i <= size; ++i) {
     new_object[i] = object[i];
   }
 
-  // 
+  //
   object[0] = (StgWord)new_object;
 }

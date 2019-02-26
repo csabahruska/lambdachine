@@ -6,13 +6,13 @@
 -- Module      :  GHC.Enum
 -- Copyright   :  (c) The University of Glasgow, 1992-2002
 -- License     :  see libraries/base/LICENSE
--- 
+--
 -- Maintainer  :  cvs-ghc@haskell.org
 -- Stability   :  internal
 -- Portability :  non-portable (GHC extensions)
 --
 -- The 'Enum' and 'Bounded' classes.
--- 
+--
 -----------------------------------------------------------------------------
 
 -- #hide
@@ -69,7 +69,7 @@ boundedEnumFrom :: (Enum a, Bounded a) => a -> [a]
 boundedEnumFrom n = map toEnum [fromEnum n .. fromEnum (maxBound `asTypeOf` n)]
 
 boundedEnumFromThen :: (Enum a, Bounded a) => a -> a -> [a]
-boundedEnumFromThen n1 n2 
+boundedEnumFromThen n1 n2
   | i_n2 >= i_n1  = map toEnum [i_n1, i_n2 .. fromEnum (maxBound `asTypeOf` n1)]
   | otherwise     = map toEnum [i_n1, i_n2 .. fromEnum (minBound `asTypeOf` n1)]
   where
@@ -284,10 +284,10 @@ instance  Enum Char  where
 
     {-# INLINE enumFromTo #-}
     enumFromTo (C# x) (C# y) = eftChar (ord# x) (ord# y)
-    
+
     {-# INLINE enumFromThen #-}
     enumFromThen (C# x1) (C# x2) = efdChar (ord# x1) (ord# x2)
-    
+
     {-# INLINE enumFromThenTo #-}
     enumFromThenTo (C# x1) (C# x2) (C# y) = efdtChar (ord# x1) (ord# x2) (ord# y)
 
@@ -369,7 +369,7 @@ instance  Bounded Int where
     maxBound =  maxInt
 
 instance  Enum Int  where
-    succ x  
+    succ x
        | x == maxBound  = error "Prelude.Enum.succ{Int}: tried to take `succ' of maxBound"
        | otherwise      = x `plusInt` oneInt
     pred x
@@ -402,14 +402,14 @@ eftInt x0 y | isTrue# (x0 ># y) = []
 
 {-# INLINE [0] eftIntFB #-}
 eftIntFB :: (Int -> r -> r) -> r -> Int# -> Int# -> r
-eftIntFB c n x0 y | isTrue# (x0 ># y) = n        
+eftIntFB c n x0 y | isTrue# (x0 ># y) = n
                   | otherwise         = go x0
                  where
                    go x = I# x `c` if isTrue# (x ==# y) then n else go (x +# 1#)
 
 efdInt :: Int# -> Int# -> [Int]
 -- [x1,x2..maxInt]
-efdInt x1 x2 
+efdInt x1 x2
  | isTrue# (x2 >=# x1) = case maxInt of I# y -> efdtIntUp x1 x2 y
  | otherwise           = case minInt of I# y -> efdtIntDn x1 x2 y
 

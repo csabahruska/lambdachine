@@ -349,7 +349,7 @@ TEST_F(AsmTest, LoadImmU64_I32Range) {
 TEST_F(AsmTest, LoadMemU64) {
   as->ret();
   as->load_u64(RID_EAX, RID_EDI, 8);
-  
+
   Word data[2] = { 0x1000000400010003UL, 0x8000000700080005UL };
   MCode *code = as->finish();
 
@@ -588,7 +588,7 @@ TEST_F(IRTestFold, FoldComm) {
   TRef tr2 = buf->slot(0);
   TRef tr3 = buf->emit(IRT(IR::kADD, IRT_I64), tr1, tr2);
   TRef tr4 = buf->emit(IRT(IR::kADD, IRT_I64), tr1, tr3);
-  
+
   // Constant should be moved to the right.
   EXPECT_EQ(tr1.ref(), buf->ir(tr3.ref())->op2());
   EXPECT_EQ(tr2.ref(), buf->ir(tr3.ref())->op1());
@@ -605,7 +605,7 @@ TEST_F(IRTestFold, FoldSub) {
   TRef lit2 = buf->literal(IRT_I64, -345);
   TRef opaque = buf->slot(0);
   TRef opaque2 = buf->slot(1);
-  
+
   TRef tr1 = buf->emit(IR::kSUB, IRT_I64, lit1, lit2);
   ASSERT_TRUE(tr1.isLiteral());
   EXPECT_EQ((uint64_t)1579, buf->literalValue(tr1.ref()));
@@ -1229,14 +1229,14 @@ protected:
   }
   virtual Word *Run(Word arg1, Word arg2) {
     Compile();
-    Word *base = SetupThread();    
+    Word *base = SetupThread();
     base[0] = arg1;
     base[1] = arg2;
     return RunAsm();
   }
   virtual Word *Run(Word arg1, Word arg2, Word arg3, Word arg4) {
     Compile();
-    Word *base = SetupThread();    
+    Word *base = SetupThread();
     base[0] = arg1;
     base[1] = arg2;
     base[2] = arg3;
@@ -1426,11 +1426,11 @@ TEST_F(RegAlloc, SnapTwice) {
   for (int i = 0; i < 4; ++i)
     for (int j = 0; j < 4; ++j)
       t[i * 4 + j] = buf->emit(IR::kADD, IRT_I64, s[i], s[j]);
-  
+
   for (int i = 0; i < 16; ++i)
     buf->setSlot(i, t[i]);
   buf->emit(IR::kLT, IRT_I64|IRT_GUARD, s[0], l1);
-  
+
   TRef u[16];
   for (int i = 0; i < 16; ++i) {
     u[i] = buf->emit(IR::kADD, IRT_I64, t[(i + 3) % 16], t[(i + 7) % 16]);
@@ -1472,7 +1472,7 @@ class ParallelAssignTest : public ::testing::Test {
 protected:
   Jit *jit;
   Assembler *as;
- 
+
 protected:
   virtual void SetUp() {
     jit = new Jit();
@@ -1529,7 +1529,7 @@ asmRegTestIsImplementedInAssembly(Word *regs, Callback f) {
     "movq %%rsi, 8(%%rsp)\n\t"  // save callback address
     "movq %%rdi, 0(%%rsp)\n\t"  // save register state pointer
     "movq %%rdi, %%rax\n\t"
-    
+
     "movq 8(%%rax), %%rcx\n\t"
     "movq 16(%%rax), %%rdx\n\t"
     "movq 24(%%rax), %%rbx\n\t"
@@ -1587,7 +1587,7 @@ asmRegTestIsImplementedInAssembly(Word *regs, Callback f) {
     "movq %%rax,0x30(%%rdx,%%rcx,8)\n\t"
     "dec %%rcx\n\t"
     "jnl .L2\n\t"
-    
+
     "addq $2176, %%rsp\n\t"
 
     // Restore callee saved regs
@@ -1698,8 +1698,8 @@ paEntry(ParAssign &pa, int entry, Reg dest_reg, uint8_t dest_spill,
     else
       pas->spills[src_spill] = value;
   }
-  
-  if (isReg(dest_reg)) { 
+
+  if (isReg(dest_reg)) {
     as->useReg(dest_reg);
     pas->regs_expected[dest_reg] = value;
   }
@@ -1712,7 +1712,7 @@ TEST_F(ParallelAssignTest, testRegTest) {
   ParallelAssignState pas;
   initPAState(&pas);
   as->setupRegAlloc();
-  
+
   paEntry(pa, entries++, RID_EAX, 0, RID_EDI,  0, as, &pas);
   pa.size = entries;
 
@@ -1735,7 +1735,7 @@ TEST_F(ParallelAssignTest, SwapRegs1) {
   paEntry(pa, entries++, RID_EAX, 0, RID_EBX,  0, as, &pas);
   paEntry(pa, entries++, RID_EBX, 0, RID_EAX,  0, as, &pas);
   pa.size = entries;
-  
+
   as->ret();
   as->parallelAssign(&pa, RID_ECX);
   MCode *code = as->finish();
@@ -1777,7 +1777,7 @@ TEST_F(ParallelAssignTest, Bug1) {
   EXPECT_TRUE(checkPAState(&pas));
 }
 
-class ParallelAssignRandomTest : 
+class ParallelAssignRandomTest :
   public ParallelAssignTest, public ::testing::WithParamInterface<int> {
 protected:
   void Dump(int param) {
@@ -1811,7 +1811,7 @@ TEST_P(ParallelAssignRandomTest, Random) {
 
   int param = GetParam();
   srandom(param);
-  
+
   ParAssign pa; int entries = 0;
   ParallelAssignState pas;
 
@@ -1875,7 +1875,7 @@ TEST_P(ParallelAssignRandomTest, Random) {
   as->ret();
   as->parallelAssign(&pa, RID_NONE);
   MCode *code = as->finish();
-  
+
   asmRegTest(pas.regs, (Callback)code);
   bool is_ok = checkPAState(&pas);
   if (!is_ok) {
@@ -1986,7 +1986,7 @@ TEST_F(TestFragment, Test1) {
 TEST_F(TestFragment, Test2) {
   // Program:
   //   f(x, y): if (y <= 0) return x; else f(x + 5, y - 1);
-  //  
+  //
 
   TRef x = buf->slot(0);
   TRef y = buf->slot(1);
@@ -2281,7 +2281,7 @@ TEST_F(TestFragment, Alloc1) {
   EXPECT_EQ(23, base[0]);
   EXPECT_EQ(&heap[0], cap.traceExitHp());
   EXPECT_EQ(&heap[2], cap.traceExitHpLim());
-  
+
   // Run 3: Heap check should succeed.  We have exactly 3 words.
   memset(heap, 0, sizeof(heap));
   base = T->base();

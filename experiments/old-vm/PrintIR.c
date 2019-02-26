@@ -142,11 +142,11 @@ printIR(Fragment *F, IRIns ir)
   }
 
   fprintf(stderr, "%-5s%3s %s%s%-8s ",
-	  regname,
-	  irt_str(ir.t),
-	  irt_getphi(ir.t) ? "%" : " ",
-	  irt_getmark(ir.t) ? "*" : " ",
-	  ir_name[ir.o]);
+          regname,
+          irt_str(ir.t),
+          irt_getphi(ir.t) ? "%" : " ",
+          irt_getmark(ir.t) ? "*" : " ",
+          ir_name[ir.o]);
   fflush(stderr);
   switch (irm_op1(ir_mode[ir.o])) {
   case IRMref:
@@ -398,7 +398,7 @@ printPrettyIRIns(FILE *out, Fragment *F, IRRef ref)
       if (irt_getmark(ir->t)) {
         fprintf(out, " Hp[%d]", hp->hp_offs);
       }
-      
+
       if (hp->ind) {
         fprintf(out, " upd=>");
         printPrettyIRRef(out, F, hp->ind);
@@ -421,11 +421,11 @@ printPrettyIR_(FILE *out, Fragment *F, int fragment_id)
   int i, s = 0;
 
   fprintf(out, "+==== Fragment: %04d =============================\n",
-	  fragment_id);
+          fragment_id);
   for (ref = REF_FIRST; ref < F->nins; ref++) {
     printPrettyIRIns(out, F, ref);
     if (s < F->nsnap && F->snap[s].ref == ref &&
-	!snapShotRemoved(&F->snap[s])) {
+        !snapShotRemoved(&F->snap[s])) {
       SnapShot *snap = &F->snap[s];
       SnapEntry *se = &F->snapmap[snap->mapofs];
       const BCIns *pc = F->startpc + (ptrdiff_t)(i4)se[snap->nent];

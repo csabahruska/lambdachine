@@ -81,7 +81,7 @@ finaliseCode arity lc@(LinearCode code0 lives _ labels) =
    maximumDflt _ xs = maximum xs
 
    code1 = Vec.imap (\offs ins -> (ins, keep offs ins)) code0
-   code = Vec.imap (adjust_idx new_labels0) 
+   code = Vec.imap (adjust_idx new_labels0)
         . Vec.map fst
         . Vec.filter snd
         $ code1
@@ -99,7 +99,7 @@ finaliseCode arity lc@(LinearCode code0 lives _ labels) =
    new_labels0 = fst $ Vec.foldl' calc_offs (M.empty, 0) code1
     where
       calc_offs :: (M.Map Label Int, Int) -> (LinearIns, Bool)
-                -> (M.Map Label Int, Int) 
+                -> (M.Map Label Int, Int)
       calc_offs (mp, new_idx) (Fst (Label l), keep) =
         (M.insert l new_idx mp, new_idx)
       calc_offs (mp, new_idx) (i, keep) =
@@ -133,7 +133,7 @@ lineariseCode env live_facts g@(GMany (JustO entry) body NothingO) =
    LinearCode (annotateWithLiveouts env live_ins lin_code)
               live_ins live_outs labels
  where
-   lin_code = Vec.fromList $ concat $ 
+   lin_code = Vec.fromList $ concat $
                 lineariseBlock env live_facts entry :
                 map (lineariseBlock env live_facts) body_blocks
    live_ins = liveIns live_facts lin_code
@@ -143,7 +143,7 @@ lineariseCode env live_facts g@(GMany (JustO entry) body NothingO) =
    ins_if_label :: M.Map Label Int -> Int -> LinearIns -> M.Map Label Int
    ins_if_label m n (Fst (Label l)) = M.insert l (n+1) m
    ins_if_label m _ _ = m
---   lin_block = 
+--   lin_block =
 
 -- | Turn a block into a linear list of instructions.
 --
@@ -161,7 +161,7 @@ lineariseBlock env live_facts blk =
    tail_ins :: [LinearIns]
    tail_ins = case tail of
                 JustC (Case ct x targets) ->
-                  [Lst (Case ct x $ map (\(tag, _, lbl) -> 
+                  [Lst (Case ct x $ map (\(tag, _, lbl) ->
                                          (tag, livesAt lbl, lbl))
                                       targets)]
                 JustC (Eval l _ r) ->
@@ -193,7 +193,7 @@ liveOuts global_live_outs inss =
    calcLives (Mid ins) live_out = live ins live_out
    calcLives (Fst ins) live_out = live ins live_out
 
-annotateWithLiveouts :: GlobalEnv 
+annotateWithLiveouts :: GlobalEnv
                      -> Vector LiveVars -> Vector LinearIns -> Vector LinearIns
 annotateWithLiveouts env lives inss = Vec.imap annotate inss
  where
@@ -383,7 +383,7 @@ mkAllocMap env lc@(LinearCode code0 lives liveouts lbls) =
   in
     if not (verifyAlloc alloc lives) then
       let lc' = LinearCode code' (Vec.map (S.map (alloc M.!)) lives) liveouts lbls in
-      error ("BUG-IN-REGALLOC2\n" ++ pretty env lc ++ "\n\n" 
+      error ("BUG-IN-REGALLOC2\n" ++ pretty env lc ++ "\n\n"
              ++ pretty env alloc ++ "\n" ++ pretty env lc')
      else
        LinearCode code' lives liveouts lbls

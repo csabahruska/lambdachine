@@ -602,7 +602,7 @@ transBody (StgConApp dcon args) env locs0 fvi ctxt
  | otherwise = do
   (is0, locs1, regs) <- transArgs args env locs0 fvi
   (is1, locs2, con_reg) <- loadDataCon dcon env fvi locs1 (contextVar ctxt)
-   -- trace (showPpr $ dataConOrigResTy dcon) $ do 
+   -- trace (showPpr $ dataConOrigResTy dcon) $ do
   rslt <- mbFreshLocal (dataConOrigResTy dcon) (contextVar ctxt)
   let is2 = (is0 <*> is1) <*> insAlloc rslt con_reg regs
   maybeAddRet ctxt is2 locs2 rslt
@@ -661,7 +661,7 @@ transBinds (StgRec pairs) env locs0 fvi = do
   let
     go [] is locs alloced pending_fwd_refs =
       if not (null pending_fwd_refs) then
-        error $ "NYI: Forward refs: " ++ 
+        error $ "NYI: Forward refs: " ++
           unlines [ pretty genv x ++ ": " ++ showFwdRef genv fwd_ref
                   | (x, fwd_ref) <- pending_fwd_refs ]
        else
@@ -708,15 +708,15 @@ transRhs :: StgRhs -> Ghc.Id -> IsRecursive -> [Ghc.Id]
          -> Trans (Bcis O, KnownLocs, Either BcVar (BcVar, [BcVar]),
                    Ghc.Type, [FwdRef])
          -- ^ Returns:
-         -- 
+         --
          --  * The code to load the arguments.
-         -- 
+         --
          --  * Updated known locations
-         -- 
+         --
          --  * Either a pointer to the closure or the variable that
          --    holds the info table and he arguments to the allocation
          --    instruction
-         -- 
+         --
          --  * The type of the result of allocation
          --  * Locations that need to be patched up later since they
          --    referred to values that have not yet been allocated.
@@ -845,7 +845,7 @@ transApp' f args env locs0 fvi ctxt
        (is1, locs2, mb_rslt) <- transApp' g_reg args2 env locs1 fvi ctxt
        return (is0 <*> is1, locs2, mb_rslt)
        -- error $ "Call with too many args: " ++ showPpr genv f ++ " (" ++
-       --         show (length args) ++ ", max: " ++ show cMAX_CALL_ARGS ++ ")\n" ++ 
+       --         show (length args) ++ ", max: " ++ show cMAX_CALL_ARGS ++ ")\n" ++
        --         showPpr genv g_type
 
   | otherwise
@@ -937,7 +937,7 @@ transCase expr@(StgOpApp (StgPrimOp op) args alt_ty) bndr (PrimAlt tycon)
 --   (is0, locs1, Just r) <- transBody expr env locs0 fvi $!
 --                             BindC (bndrType bndr) Nothing
 --   mb_dflt <- case alts of
---     (DEFAULT:other -> 
+--     (DEFAULT:other ->
 --   st <- getStack
 --   error $ "NYI " ++ showPpr (expr, st)
  --       transBody build_bool_expr env fvi locs0 ctxt
@@ -1011,13 +1011,13 @@ transCase expr bndr (PrimAlt tycon) alts env0 locs0 fvi ctxt = do
       l <- freshLabel
       (bcis, _locs', _mb_var) <- transBody bdy env locs2 fvi ctxt'
       case ctxt' of
-        RetC -> 
+        RetC ->
           return (l, mkLabel l <*> bcis)
         BindC _ _ ->
           return (l, mkLabel l <*> bcis <*> insGoto end_label)
 
   (dflt_label, dflt_bcis) <- transArm dflt
-  
+
   let
     build_branches :: CaseTree
                    -> Trans (Label, [BcGraph C C])

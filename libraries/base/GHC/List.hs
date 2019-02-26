@@ -28,12 +28,12 @@ head []                 =  badHead
 
 badHead :: a
 badHead = errorEmptyList "head"
--- This rule is useful in cases like 
+-- This rule is useful in cases like
 --      head [y | (x,y) <- ps, x==t]
 {-# RULES
 "head/build"    forall (g::forall b.(a->b->b)->b->b) .
                 head (build g) = g (\x _ -> x) badHead
-"head/augment"  forall xs (g::forall b. (a->b->b) -> b -> b) . 
+"head/augment"  forall xs (g::forall b. (a->b->b) -> b -> b) .
                 head (augment g xs) = g (\x _ -> x) (head xs)
  #-}
 
@@ -95,13 +95,13 @@ foldr1 _ []             =  undef
 scanr                   :: (a -> b -> b) -> b -> [a] -> [b]
 scanr _ q0 []           =  [q0]
 scanr f q0 (x:xs)       =  f x q : qs
-                           where qs@(q:_) = scanr f q0 xs 
+                           where qs@(q:_) = scanr f q0 xs
 
 scanr1                  :: (a -> a -> a) -> [a] -> [a]
 scanr1 _ []             =  []
 scanr1 _ [x]            =  [x]
 scanr1 f (x:xs)         =  f x q : qs
-                           where qs@(q:_) = scanr1 f xs 
+                           where qs@(q:_) = scanr1 f xs
 
 iterate :: (a -> a) -> a -> [a]
 iterate f x =  x : iterate f (f x)
@@ -127,7 +127,7 @@ cycle xs                = xs' where xs' = xs ++ xs'
 
 takeWhile               :: (a -> Bool) -> [a] -> [a]
 takeWhile _ []          =  []
-takeWhile p (x:xs) 
+takeWhile p (x:xs)
             | p x       =  x : takeWhile p xs
             | otherwise =  []
 
@@ -246,7 +246,7 @@ concat = foldr (++) []
 -- | 'break', applied to a predicate @p@ and a list @xs@, returns a tuple where
 -- first element is longest prefix (possibly empty) of @xs@ of elements that
 -- /do not satisfy/ @p@ and second element is the remainder of the list:
--- 
+--
 -- > break (> 3) [1,2,3,4,1,2,3,4] == ([1,2,3],[4,1,2,3,4])
 -- > break (< 9) [1,2,3] == ([],[1,2,3])
 -- > break (> 9) [1,2,3] == ([1,2,3],[])

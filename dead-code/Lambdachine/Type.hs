@@ -9,7 +9,7 @@ mkTyVar :: String -> TyVar
 mkTyVar = TV
 
 data TyCon = TyCon
-  { tyConName :: String 
+  { tyConName :: String
   , tyConArity :: Int
   } deriving (Eq, Ord, Show)
 

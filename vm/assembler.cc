@@ -506,7 +506,7 @@ Reg Assembler::destReg(IR *ins, RegSet allow) {
     saveReg(ins, dest);
     // TODO: A more sophisticated scheme might be able to safely reuse
     // spill slots, but this is wrong:
-    // 
+    //
     //     spills_.free(ins->spill());
   }
   return dest;
@@ -677,7 +677,7 @@ Assembler::bitshift(IR *ins, x86Shift xs)
     switch (shift) {
     case 0:
       break;
-    case 1: 
+    case 1:
       emit_rr(XO_SHIFT1, xs | REX_64, dest);
       break;
     default:
@@ -862,7 +862,7 @@ Assembler::heapCheckFailure(SnapNo snapno, MCode *retryAddress, MCode *p, int32_
   //      0: 57             push   %rdi
   //      1: 56             push   %rsi
   //      2: bf <exitno>    mov    $<exitno>,%edi
-  //      7: be <bytes>     mov    $<bytes>,%rdi 
+  //      7: be <bytes>     mov    $<bytes>,%rdi
   //     12: e8 00 00 00 00 callq  asmHeapOverflow
   //     17: 5e             pop    %rsi
   //     18: 5f             pop    %rdi
@@ -874,7 +874,7 @@ Assembler::heapCheckFailure(SnapNo snapno, MCode *retryAddress, MCode *p, int32_
   *p++ = XI_MOVri + RID_EDI;
   *(int32_t *)p = (int32_t)snapno;
   p += 4;
-  
+
   *p++ = XI_MOVri + RID_ESI;
   *(int32_t *)p = bytes;
   p += 4;
@@ -885,7 +885,7 @@ Assembler::heapCheckFailure(SnapNo snapno, MCode *retryAddress, MCode *p, int32_
 
   *p++ = XI_POP + RID_ESI;
   *p++ = XI_POP + RID_EDI;
-  
+
   *p++ = XI_JMP;
   p += 4;
   *(int32_t *)(p - 4) = jmprel(p, retryAddress);
@@ -1065,7 +1065,7 @@ Assembler::incrementCounter(uint64_t *counterAddr)
   // We emit a PC-relative INC.  For example:
   //
   //     incq 0x200b31(%rip)  =  48 ff 05 [31 0b 20 00]
-  //   
+  //
   MCode *p = mcp;
   *(int32_t *)(p - 4) = jmprel(p, (MCode *)(void *)counterAddr);
   p[-5] = 0x05;
@@ -1237,7 +1237,7 @@ void Assembler::heapCheck(IR *ins) {
     mcQuickHeapCheck_ = NULL;
 
   } else {
-    
+
     guardcc(CC_A);
 
     // HpLim == [rsp + HPLIM_SP_OFFS]
@@ -1496,7 +1496,7 @@ bool needsMoving(RegSpill dst, RegSpill src) {
 static inline
 bool conflicts(RegSpill candidate, RegSpill src) {
   return
-    (isReg(candidate.reg) && candidate.reg == src.reg) || 
+    (isReg(candidate.reg) && candidate.reg == src.reg) ||
     (hasSpill(candidate) && candidate.spill == src.spill);
 }
 
@@ -1510,7 +1510,7 @@ getTemp(Assembler *as, ParAssign *assign)
     cerr << "More than one temporary required for parallel assignment.\n";
     exit(EXIT_FAILURE);
   }
-  
+
   Reg r;
   if (as->hasFreeReg()) {
     r = as->allocScratchReg(kGPR);
@@ -1578,7 +1578,7 @@ void Assembler::transfer(RegSpill dst, RegSpill src, ParAssign *assign) {
 
   If all assignments are from register to register, we can spill one
   to memory:
-  
+
       mov [rbp + N], rbx
       mov rbx, rax
       mov rax, [rbp + N]
@@ -1707,7 +1707,7 @@ Assembler::parallelAssign(ParAssign *assign, Reg optTmp)
   }
 
   memset(assign->status, 0, sizeof(assign->status[0]) * assign->size);
-  assign->tmpsInUse = 0; 
+  assign->tmpsInUse = 0;
   assign->usingHp = 0;
 
   for (uint32_t i = 0; i < assign->size; ++i)

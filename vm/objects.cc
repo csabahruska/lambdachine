@@ -42,7 +42,7 @@ void
 printClosureShort(ostream &out, Closure *cl)
 {
   const InfoTable *info = cl->info();
-  
+
   if (!info) {
     out << "[!NULL!]";
     return;
@@ -58,7 +58,7 @@ printClosureShort(ostream &out, Closure *cl)
 
   const char *name = info->name();
   const char *lastdot = strrchr(name, '.');
-  if (lastdot == NULL) 
+  if (lastdot == NULL)
     lastdot = name;
   else
     ++lastdot;

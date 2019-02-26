@@ -3,13 +3,13 @@ module Text.Read.Lex
   -- lexing types
   ( Lexeme(..)  -- :: *; Show, Eq
 
-  -- lexer      
+  -- lexer
   , lex         -- :: ReadP Lexeme      Skips leading spaces
   , hsLex       -- :: ReadP String
   , lexChar     -- :: ReadP Char        Reads just one char, with H98 escapes
 
   , readIntP    -- :: Num a => a -> (Char -> Bool) -> (Char -> Int) -> ReadP a
-  , readOctP    -- :: Num a => ReadP a 
+  , readOctP    -- :: Num a => ReadP a
   , readDecP    -- :: Num a => ReadP a
   , readHexP    -- :: Num a => ReadP a
 
@@ -22,7 +22,7 @@ import GHC.Base
 import GHC.Char
 import GHC.Num( Num(..), Integer )
 import GHC.Show( Show(..) )
-import GHC.Real( Ratio(..), Integral, Rational, (%), fromIntegral, 
+import GHC.Real( Ratio(..), Integral, Rational, (%), fromIntegral,
                  toInteger, (^), (^^), infinity, notANumber )
 import {-# SOURCE #-} GHC.Unicode ( isSpace, isAlpha, isAlphaNum )
 import GHC.List
@@ -47,17 +47,17 @@ lex = skipSpaces >> lexToken
 
 hsLex :: ReadP String
 -- ^ Haskell lexer: returns the lexed string, rather than the lexeme
-hsLex = do skipSpaces 
+hsLex = do skipSpaces
            (s,_) <- gather lexToken
            return s
 
 lexToken :: ReadP Lexeme
 lexToken = lexEOF     +++
-           lexLitChar +++ 
-           lexString  +++ 
-           lexPunc    +++ 
-           lexSymbol  +++ 
-           lexId      +++ 
+           lexLitChar +++
+           lexString  +++
+           lexPunc    +++
+           lexSymbol  +++
+           lexId      +++
            lexNumber
 
 lexEOF :: ReadP Lexeme
@@ -81,7 +81,7 @@ lexPunc =
 lexSymbol :: ReadP Lexeme
 lexSymbol =
   do s <- munch1 isSymbolChar
-     if s `elem` reserved_ops then 
+     if s `elem` reserved_ops then
         return (Punc s)         -- Reserved-ops count as punctuation
       else
         return (Symbol s)
@@ -96,10 +96,10 @@ lexId :: ReadP Lexeme
 lexId = lex_nan <++ lex_id
   where
         -- NaN and Infinity look like identifiers, so
-        -- we parse them first.  
+        -- we parse them first.
     lex_nan = (string "NaN"      >> return (Rat notANumber)) +++
               (string "Infinity" >> return (Rat infinity))
-  
+
     lex_id = do c <- satisfy isIdsChar
                 s <- munch isIdfChar
                 return (Ident (c:s))
@@ -136,13 +136,13 @@ lexCharE =
      if c1 == '\\'
        then do c2 <- lexEsc; return (c2, True)
        else do return (c1, False)
- where 
+ where
   lexEsc =
     lexEscChar
       +++ lexNumeric
         +++ lexCntrlChar
           +++ lexAscii
-  
+
   lexEscChar =
     do c <- get
        case c of
@@ -157,7 +157,7 @@ lexCharE =
          '\"' -> return '\"'
          '\'' -> return '\''
          _    -> pfail
-  
+
   lexNumeric =
     do base <- lexBaseChar <++ return 10
        n    <- lexInteger base
@@ -205,7 +205,7 @@ lexCharE =
   lexAscii =
     do choice
          [ (string "SOH" >> return '\SOH') <++
-           (string "SO"  >> return '\SO') 
+           (string "SO"  >> return '\SO')
                 -- \SO and \SOH need maximal-munch treatment
                 -- See the Haskell report Sect 2.6
 
@@ -261,7 +261,7 @@ lexString =
 
   lexStrItem = (lexEmpty >> lexStrItem)
                +++ lexCharE
-  
+
   lexEmpty =
     do _ <- char '\\'
        c <- get
@@ -277,11 +277,11 @@ type Base   = Int
 type Digits = [Int]
 
 lexNumber :: ReadP Lexeme
-lexNumber 
+lexNumber
   = lexHexOct  <++      -- First try for hex or octal 0x, 0o etc
                         -- If that fails, try for a decimal number
     lexDecNumber        -- Start with ordinary digits
-                
+
 lexHexOct :: ReadP Lexeme
 lexHexOct
   = do  _ <- char '0'
@@ -297,7 +297,7 @@ lexBaseChar = do { c <- get;
                         'O' -> return 8
                         'x' -> return 16
                         'X' -> return 16
-                        _   -> pfail } 
+                        _   -> pfail }
 
 lexDecNumber :: ReadP Lexeme
 lexDecNumber =
@@ -307,15 +307,15 @@ lexDecNumber =
      return (value xs mFrac mExp)
  where
   value xs mFrac mExp = valueFracExp (val 10 0 xs) mFrac mExp
-  
-  valueFracExp :: Integer -> Maybe Digits -> Maybe Integer 
+
+  valueFracExp :: Integer -> Maybe Digits -> Maybe Integer
                -> Lexeme
-  valueFracExp a Nothing Nothing        
+  valueFracExp a Nothing Nothing
     = Int a                                             -- 43
   valueFracExp a Nothing (Just exp)
     | exp >= 0  = Int (a * (10 ^ exp))                  -- 43e7
     | otherwise = Rat (valExp (fromInteger a) exp)      -- 43e-7
-  valueFracExp a (Just fs) mExp 
+  valueFracExp a (Just fs) mExp
      = case mExp of
          Nothing  -> Rat rat                            -- 4.3
          Just exp -> Rat (valExp rat exp)               -- 4.3e-4
@@ -338,7 +338,7 @@ lexExp = do _ <- char 'e' +++ char 'E'
             exp <- signedExp +++ lexInteger 10
             return (Just exp)
  where
-   signedExp 
+   signedExp
      = do c <- char '-' +++ char '+'
           n <- lexInteger 10
           return (if c == '-' then -n else n)

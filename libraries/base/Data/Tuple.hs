@@ -5,7 +5,7 @@
 -- Module      :  Data.Tuple
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  portable
@@ -31,7 +31,7 @@ import GHC.Base
 --    when expanding instance declarations
 
 import GHC.Tuple
--- We must import GHC.Tuple, to ensure sure that the 
+-- We must import GHC.Tuple, to ensure sure that the
 -- data constructors of `(,)' are in scope when we do
 -- the standalone deriving instance for Eq (a,b) etc
 

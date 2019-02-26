@@ -28,8 +28,8 @@ namespace arch {
   } Arch;
 
 /* Target endianess. */
-#define LAMBDACHINE_LE	0
-#define LAMBDACHINE_BE	1
+#define LAMBDACHINE_LE  0
+#define LAMBDACHINE_BE  1
 
 /* Target architectures. */
 #define LAMBDACHINE_ARCH_X86    1
@@ -51,24 +51,24 @@ namespace arch {
 
 /* Set target properties. */
 #if LAMBDACHINE_TARGET == LAMBDACHINE_ARCH_X86
-# define LC_ARCH_NAME		"x86"
-# define LC_ARCH_BITS		32
-# define LC_ARCH_ENDIAN		LAMBDACHINE_LE
-# define LC_TARGET_X86		1
-# define LC_TARGET_X86ORX64	1
-# define LC_PAGESIZE		4096
+# define LC_ARCH_NAME           "x86"
+# define LC_ARCH_BITS           32
+# define LC_ARCH_ENDIAN         LAMBDACHINE_LE
+# define LC_TARGET_X86          1
+# define LC_TARGET_X86ORX64     1
+# define LC_PAGESIZE            4096
     const int kBitsPerWord = 32;
     const Endianness kEndianness = ENDIAN_LITTLE;
     const Arch kArch = X86;
     const char kArchName[] = "x86-32";
 #elif LAMBDACHINE_TARGET == LAMBDACHINE_ARCH_X64
-# define LC_ARCH_NAME		"x64"
-# define LC_ARCH_BITS		64
-# define LC_ARCH_ENDIAN		LAMBDACHINE_LE
-# define LC_TARGET_X64		1
-# define LC_TARGET_X86ORX64	1
-# define LC_PAGESIZE		4096
-# define LC_TARGET_JUMPRANGE	31/* +-2^31 = +-2GB */
+# define LC_ARCH_NAME           "x64"
+# define LC_ARCH_BITS           64
+# define LC_ARCH_ENDIAN         LAMBDACHINE_LE
+# define LC_TARGET_X64          1
+# define LC_TARGET_X86ORX64     1
+# define LC_PAGESIZE            4096
+# define LC_TARGET_JUMPRANGE    31/* +-2^31 = +-2GB */
     const int kBitsPerWord = 64;
     const Endianness kEndianness = ENDIAN_LITTLE;
     const Arch kArch = X86_64;

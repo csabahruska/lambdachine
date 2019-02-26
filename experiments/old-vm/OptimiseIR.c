@@ -140,7 +140,7 @@ optFold(JitState *J)
   case IR_SLOAD:
     {
       if (J->slot[(i2)foldIns->op1 + INITIAL_BASE])
-	return J->slot[(i2)foldIns->op1 + INITIAL_BASE];
+        return J->slot[(i2)foldIns->op1 + INITIAL_BASE];
     }
     break;
   case IR_HEAPCHK:
@@ -166,10 +166,10 @@ optFold(JitState *J)
       /* Detect when we're loading a field from a static constant. */
       IRIns *fref = IR(foldIns->op1);
       if (fref->o == IR_FREF && irref_islit(fref->op1)) {
-	Closure *c = (Closure*)loadWordConstant(J, fref->op1);
-	// TODO: assert correct offset
-	u4 field = fref->op2 - 1;
-	return emitKWord(J, (Word)c->payload[field], LIT_WORD);
+        Closure *c = (Closure*)loadWordConstant(J, fref->op1);
+        // TODO: assert correct offset
+        u4 field = fref->op2 - 1;
+        return emitKWord(J, (Word)c->payload[field], LIT_WORD);
       }
     }
     break;
@@ -347,7 +347,7 @@ findPhi_aux(JitState *J, IRRef ref)
 {
   LC_ASSERT(ref < J->cur.nloop && irt_getphi(IR(ref)->t));
   //  DBG_LVL(3, "findPhi: %d\n", irref_int(ref));
-  
+
   // Linear search through the PHI nodes.  We expect there to be not
   // very many PHI nodes in general and they are in adjacent cache
   // lines so binary search probably wouldn't be (much) faster.
@@ -363,7 +363,7 @@ findPhi_aux(JitState *J, IRRef ref)
       break;
     r--;
   }
-  
+
   fprintf(stderr, "findPhi_aux: Could not find PHI noder for: %d",
           irref_int(ref));
   exit(2);
@@ -437,7 +437,7 @@ optDeadCodeElim(JitState *J, bool post_sink)
   if (J->cur.nloop) {
     // Mark unrolled loop
     for ( ; snapidx >= 0 && J->cur.snap[snapidx].ref > J->cur.nloop;
-	  snapidx--)
+          snapidx--)
       markSnapshot(J, &J->cur.snap[snapidx], post_sink);
 
     for (ref = J->cur.nins - 1; ref > J->cur.nloop; ref--)
@@ -455,7 +455,7 @@ optDeadCodeElim(JitState *J, bool post_sink)
   IF_DBG_LVL(3, printIRBuffer(J));
 
   /* 4. Replace all unmarked instructions by NOPs
-  
+
      We also need to fix up the previous pointer and [J->chain.]
      Note, that we don't bother updating the [J->chain] entries for
      NOPs, though.  (We never traverse the NOP chain, so this avoids
@@ -474,7 +474,7 @@ optDeadCodeElim(JitState *J, bool post_sink)
        - if the allocation is NOT sunken we need a PHI node only
          for the allocated pointer.  (Some fields may require PHI
          nodes for other reasons, though)
-     
+
      Thusly, wek keep a PHI node if any of its arguments is used.
      Also make sure that both arguments are marked.  i.e.,
 
@@ -502,14 +502,14 @@ optDeadCodeElim(JitState *J, bool post_sink)
     LC_ASSERT(phi_parent != NULL && *phi_parent == ref);
 
     bool remove_phi, set_mark;
-    
+
     if (post_sink) {
       remove_phi = !irt_getmark(ir->t);
       set_mark = false;
     } else {
       bool mark1 = irt_getmark(IR(ir->op1)->t);
       bool mark2 = irt_getmark(IR(ir->op2)->t);
-      
+
       remove_phi = !(mark1 || mark2) || irt_type(ir->t) == IRT_VOID;
       set_mark = !(mark1 && mark2);
     }
@@ -573,10 +573,10 @@ deadPhiElim(JitState *J)
     /* LOOP INVARIANTS: all PHIs + chain insertion */
     LC_ASSERT(ir->o == IR_PHI);
     LC_ASSERT(phi_parent != NULL && *phi_parent == ref);
-    
+
     bool sunken1 = IR(ir->op1)->o == IR_NEW && ir_issunken(IR(ir->op1));
     bool sunken2 = IR(ir->op2)->o == IR_NEW && ir_issunken(IR(ir->op2));
-    
+
     DBG_LVL(3, "DPE: PHI %d => Sunken: %d=%d, %d=%d\n",
             irref_int(ref),
             irref_int(ir->op1), sunken1,
@@ -646,7 +646,7 @@ markSunkenNode(JitState *J, IRIns *ir, IRRef site)
   HeapInfo *hpi = getHeapInfo(&J->cur, ir);
   int i;
   for (i = 0; i < hpi->nfields; i++) {
-            
+
     IRRef ref = getHeapInfoField(&J->cur, hpi, i);
     IRIns *ir2 = IR(ref);
     DBG_LVL(3, "DCE2: Marking %d due to sunken %d, refsite = %d\n",
@@ -912,7 +912,7 @@ though.
 void
 reorderPhis(JitState *J)
 {
-  
+
 }
 */
 

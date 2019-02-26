@@ -4,7 +4,7 @@
 // #include "arch.h"
 #include "vm.h"
 
-#define DEF_BCI(name)	BCIns* bci_##name(VMState *L, BCIns *pc, StgWord **disp_ref)
+#define DEF_BCI(name)   BCIns* bci_##name(VMState *L, BCIns *pc, StgWord **disp_ref)
 
 #define DECODE_COMMON  StgWord *base = L->base; BCIns ins = *pc++
 #define DECODE_A       DECODE_COMMON; unsigned ra = bc_a(ins)
@@ -78,7 +78,7 @@ DEF_BCI(jmp)
   return pc + bc_j(ins);
 }
 
-/* 
+/*
    Conditional branch instructions are always followed by a JMP.
    If the condition is true, then we immediately execute this jump.
  */
@@ -241,7 +241,7 @@ void test3()
 
   /* dispatch[OP_EXIT] = &bci_exit; */
   /* dispatch[OP_ADDI_RR] = &bci_addi_rr; */
-  
+
   /* testcode[0] = BCINS_ABC(OP_MULI_RR, 0, 1, 2); */
   /* testcode[1] = BCINS_AD(OP_KSHORT, 1, -1); */
   testcode[0] = BCINS_AD(OP_ISLT, 2, 1);
@@ -253,7 +253,7 @@ void test3()
   lc_pushint(L, 3); // R(1)
   lc_pushint(L, 4); // R(2)
   lc_printstate(L);
-  
+
   test_interp(L->gbl_state->dispatch_tbl, L, testcode);
 
   lc_printstate(L);
@@ -289,12 +289,12 @@ void test2()
   proto->code[11] = BCINS_AJ(OP_JMP, 0, -8); // goto 0
   proto->code[12] = BCINS_AD(OP_RET1, 1, 0);
   proto->code[12] = 0;
-  
+
   printf("Gbl: %p,  TSO: %p\n", gbl, L);
   printf("code: %p,  clos: %p\n", proto->code, &clos);
   print_bytecode((BCIns*)proto->code);
   print_bytecode((BCIns*)gbl->entry_closure->proto);
-  
+
   clos.proto = cast(Prototype*,proto->code);
   // no free variables
 
@@ -302,7 +302,7 @@ void test2()
   lc_printstate(L);
   vm_call(L, 1);
   lc_printstate(L);
-  
+
   free(proto);
   destroy_thread(L);
 }
@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
   //StgWord w = 42;
   //printf("word %ld", sizeof(long));
   test2();
-  
+
   return 0;
 }
 

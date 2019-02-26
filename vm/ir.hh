@@ -361,7 +361,7 @@ public:
   inline bool isLiteral() const { return ref() < REF_BASE; }
   inline void markWritten() { raw_ |= kWritten; }
   inline bool isWritten() const { return raw_ & kWritten; }
-  
+
   bool operator==(const TRef &t) const { return raw_ == t.raw_; }
   bool operator!=(const TRef &t) const { return raw_ != t.raw_; }
   operator IRRef1() { return (IRRef1)raw_; }
@@ -392,7 +392,7 @@ private:
 
 LC_STATIC_ASSERT(sizeof(SnapEntry) == sizeof(uint32_t));
 
-inline SnapEntry::SnapEntry(int s, IRRef1 r) 
+inline SnapEntry::SnapEntry(int s, IRRef1 r)
   : raw_(((uint32_t)s << 16) | (uint32_t)r) {}
 
 
@@ -694,7 +694,7 @@ class CallStack {
 public:
   CallStack();
   ~CallStack();
-  
+
   void reset();
 
   inline StackNodeRef parent(StackNodeRef node) const {
@@ -713,7 +713,7 @@ public:
   // Compare two call stacks.  Returns -1 if they are equal, or the
   // index (0 = top of stack) of the first difference if they are not.
   // For example:
-  // 
+  //
   //     compare([], []) == -1
   //     compare([A,B], [A,B]) == -1
   //     compare([A], [A,B]) == 1
@@ -864,7 +864,7 @@ public:
 
   inline void enableOptimisation(int optId) { flags_.set(optId); }
   inline void disableOptimisation(int optId) { flags_.clear(optId); }
-  
+
   void snapshot(IRRef ref, void *pc);
   SnapNo snapshot(void *pc);
   inline Snapshot &snap(SnapNo n) {
@@ -1031,7 +1031,7 @@ Snapshot::overallocated(AbstractHeap *heap) const
 {
   if (lastHeapEntry_ < 0)
     return 0;
-  
+
   AbstractHeapEntry &entry = heap->entry(lastHeapEntry_);
   return entry.overallocated();
 }

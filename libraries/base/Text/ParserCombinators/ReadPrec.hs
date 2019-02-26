@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -XNoImplicitPrelude #-}
 module Text.ParserCombinators.ReadPrec
-  ( 
+  (
   ReadPrec,      -- :: * -> *; instance Functor, Monad, MonadPlus
-  
+
   -- * Precedences
   Prec,          -- :: *; = Int
   minPrec,       -- :: Prec; = 0
@@ -61,7 +61,7 @@ instance Monad ReadPrec where
   return x  = P (\_ -> return x)
   fail s    = P (\_ -> fail s)
   P f >>= k = P (\n -> do a <- f n; let P f' = k a in f' n)
-  
+
 instance MonadPlus ReadPrec where
   mzero = pfail
   mplus = (+++)
@@ -84,7 +84,7 @@ reset :: ReadPrec a -> ReadPrec a
 reset (P f) = P (\_ -> f minPrec)
 
 prec :: Prec -> ReadPrec a -> ReadPrec a
--- ^ @(prec n p)@ checks whether the precedence context is 
+-- ^ @(prec n p)@ checks whether the precedence context is
 --   less than or equal to @n@, and
 --
 --   * if not, fails

@@ -105,7 +105,7 @@ main = do
 
     out <- handleSourceError (\e -> do
                GHC.printException e
-               liftIO $ exitWith (ExitFailure 1)) $ 
+               liftIO $ exitWith (ExitFailure 1)) $
              liftIO $ compileFile hsc_env StopLn (file, Nothing)
     return ()
 
@@ -160,7 +160,7 @@ lcPhaseHook _options pp path dflags = do
 
 genBytecode :: Cli.Options -> HscEnv -> CgGuts -> ModSummary -> FilePath -> IO (FilePath, ())
 genBytecode options hsc_env guts mod_summary outputFilename = do
-  
+
   let dflags = hsc_dflags hsc_env
   let CgGuts{ -- This is the last use of the ModGuts in a compilation.
               -- From now on, we just use the bits we need.
@@ -170,7 +170,7 @@ genBytecode options hsc_env guts mod_summary outputFilename = do
         cg_foreign  = foreign_stubs0,
         cg_dep_pkgs = dependencies,
         cg_hpc_info = hpc_info } = guts
-                                   
+
   let imports =
         [ unLoc (ideclName imp)
         | L _ imp <- ms_textual_imps mod_summary ++ ms_srcimps mod_summary ]
@@ -204,10 +204,10 @@ genBytecode options hsc_env guts mod_summary outputFilename = do
 
   when (Cli.dumpBytecode options) $ do
     pprint genv bco_mdl
-  
+
   let file = ml_obj_file (ms_location mod_summary)
   let ofile = file `replaceExtension` ".lcbc"
-  
+
   putStrLn $ "Writing bytecode to " ++ show ofile
   tmpdir <- getTemporaryDirectory
   (tmpfile, hdl) <- openBinaryTempFile tmpdir "lcc.lcbc"
@@ -226,7 +226,7 @@ touchObjectFile dflags path = do
   SysTools.touch dflags "Touching object file" path
 
 
-{-    
+{-
     let hooks = defaultHooks
                   { hookCodeGen = compileToBytecode2 opts hsc_env
                   , hookPostBackendPhase =
@@ -252,7 +252,7 @@ compileToBytecode' :: Cli.Options
                    -- -> ModIface -> ModDetails -> CgGuts -> ModSummary
                    -- -> IO (Messages, Maybe FilePath)
 compileToBytecode' options hsc_env _default modIface modDetails guts mod_summary = do
-  
+
   let dflags = hsc_dflags hsc_env
   -- guts are already tidy
   let core_binds0 = cg_binds guts
@@ -289,7 +289,7 @@ compileToBytecode' options hsc_env _default modIface modDetails guts mod_summary
 
       let file = ml_obj_file (ms_location mod_summary)
       let ofile = file `replaceExtension` ".lcbc"
-      
+
       putStrLn $ "Writing bytecode to " ++ show ofile
       tmpdir <- getTemporaryDirectory
       (tmpfile, hdl) <- openBinaryTempFile tmpdir "lcc.lcbc"
@@ -299,7 +299,7 @@ compileToBytecode' options hsc_env _default modIface modDetails guts mod_summary
         hClose hdl
         renameFile tmpfile ofile
       return ((emptyBag, emptyBag), Just Nothing)
-  
+
 
 compileToBytecode2 :: Cli.Options
                    -> HscEnv
@@ -318,7 +318,7 @@ compileToBytecode2 options hsc_env _default modIface modDetails guts mod_summary
         cg_foreign  = foreign_stubs0,
         cg_dep_pkgs = dependencies,
         cg_hpc_info = hpc_info } = guts
-                                   
+
   let imports =
         [ unLoc (ideclName imp)
         | L _ imp <- ms_textual_imps mod_summary ++ ms_srcimps mod_summary ]
@@ -350,10 +350,10 @@ compileToBytecode2 options hsc_env _default modIface modDetails guts mod_summary
 
   when (Cli.dumpBytecode options) $ do
     pprint $ bco_mdl
-  
+
   let file = ml_obj_file (ms_location mod_summary)
   let ofile = file `replaceExtension` ".lcbc"
-  
+
   putStrLn $ "Writing bytecode to " ++ show ofile
   tmpdir <- getTemporaryDirectory
   (tmpfile, hdl) <- openBinaryTempFile tmpdir "lcc.lcbc"
@@ -394,7 +394,7 @@ compileToBytecode options hsc_env mod_summary source_unchanged = do
 
       let file = ml_obj_file (ms_location mod_summary)
       let ofile = file `replaceExtension` ".lcbc"
-      
+
       putStrLn $ "Writing bytecode to " ++ show ofile
       tmpdir <- getTemporaryDirectory
       (tmpfile, hdl) <- openBinaryTempFile tmpdir "lcc.lcbc"
@@ -508,7 +508,7 @@ main = do
 --     return ()
 -}
 --    test_insts2 bcos'
-   
+
     --let entry:_ = filter ((=="test") . show) (M.keys bcos')
     --pprint $ fst $ interp entry bcos'
     --test_record1 bcos'

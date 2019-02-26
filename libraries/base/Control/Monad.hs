@@ -29,7 +29,7 @@ module Control.Monad
     , mapAndUnzipM  -- :: (Monad m) => (a -> m (b,c)) -> [a] -> m ([b], [c])
     , zipWithM      -- :: (Monad m) => (a -> b -> m c) -> [a] -> [b] -> m [c]
     , zipWithM_     -- :: (Monad m) => (a -> b -> m c) -> [a] -> [b] -> m ()
-    , foldM         -- :: (Monad m) => (a -> b -> m a) -> a -> [b] -> m a 
+    , foldM         -- :: (Monad m) => (a -> b -> m a) -> a -> [b] -> m a
     , foldM_        -- :: (Monad m) => (a -> b -> m a) -> a -> [b] -> m ()
     , replicateM    -- :: (Monad m) => Int -> m a -> m [a]
     , replicateM_   -- :: (Monad m) => Int -> m a -> m ()
@@ -65,7 +65,7 @@ f =<< x         = x >>= f
 
 -- | Evaluate each action in the sequence from left to right,
 -- and collect the results.
-sequence       :: Monad m => [m a] -> m [a] 
+sequence       :: Monad m => [m a] -> m [a]
 {-# INLINE sequence #-}
 sequence ms = foldr k (return []) ms
             where
@@ -73,7 +73,7 @@ sequence ms = foldr k (return []) ms
 
 -- | Evaluate each action in the sequence from left to right,
 -- and ignore the results.
-sequence_        :: Monad m => [m a] -> m () 
+sequence_        :: Monad m => [m a] -> m ()
 {-# INLINE sequence_ #-}
 sequence_ ms     =  foldr (>>) (return ()) ms
 
@@ -94,7 +94,7 @@ class Monad m => MonadPlus m where
    -- > mzero >>= f  =  mzero
    -- > v >> mzero   =  mzero
    --
-   mzero :: m a 
+   mzero :: m a
    -- | an associative operation
    mplus :: m a -> m a -> m a
 

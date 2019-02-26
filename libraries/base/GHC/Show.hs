@@ -5,7 +5,7 @@
 -- Module      :  GHC.Show
 -- Copyright   :  (c) The University of Glasgow, 1992-2002
 -- License     :  see libraries/base/LICENSE
--- 
+--
 -- Maintainer  :  cvs-ghc@haskell.org
 -- Stability   :  internal
 -- Portability :  non-portable (GHC Extensions)
@@ -130,8 +130,8 @@ instance Show Int where
 instance Show a => Show (Maybe a) where
     showsPrec _p Nothing s = showString "Nothing" s
     showsPrec p (Just x) s
-                          = (showParen (p > appPrec) $ 
-                             showString "Just " . 
+                          = (showParen (p > appPrec) $
+                             showString "Just " .
                              showsPrec appPrec1 x) s
 
 instance  (Show a, Show b) => Show (a,b)  where
@@ -151,12 +151,12 @@ instance (Show a, Show b, Show c, Show d, Show e, Show f) => Show (a,b,c,d,e,f) 
 
 instance (Show a, Show b, Show c, Show d, Show e, Show f, Show g)
         => Show (a,b,c,d,e,f,g) where
-  showsPrec _ (a,b,c,d,e,f,g) s 
+  showsPrec _ (a,b,c,d,e,f,g) s
         = show_tuple [shows a, shows b, shows c, shows d, shows e, shows f, shows g] s
 
 instance (Show a, Show b, Show c, Show d, Show e, Show f, Show g, Show h)
          => Show (a,b,c,d,e,f,g,h) where
-  showsPrec _ (a,b,c,d,e,f,g,h) s 
+  showsPrec _ (a,b,c,d,e,f,g,h) s
         = show_tuple [shows a, shows b, shows c, shows d, shows e, shows f, shows g, shows h] s
 
 -- TODO: instances for N-tuples with N > 8
@@ -221,10 +221,10 @@ protectEsc p f             = f . cont
 asciiTab :: [String]
 asciiTab = -- Using an array drags in the array module.  listArray ('\NUL', ' ')
            ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
-            "BS",  "HT",  "LF",  "VT",  "FF",  "CR",  "SO",  "SI", 
+            "BS",  "HT",  "LF",  "VT",  "FF",  "CR",  "SO",  "SI",
             "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB",
-            "CAN", "EM",  "SUB", "ESC", "FS",  "GS",  "RS",  "US", 
-            "SP"] 
+            "CAN", "EM",  "SUB", "ESC", "FS",  "GS",  "RS",  "US",
+            "SP"]
 
 intToDigit :: Int -> Char
 intToDigit (I# i)

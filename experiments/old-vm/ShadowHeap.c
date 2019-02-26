@@ -141,7 +141,7 @@ writeToShadowHeap(Word *address, Word value)
 
 void resetShadowHeap(Word *hp, Word *hp_lim) {
   memset(G_shadowHeap, 0,
-	 sizeof(*G_shadowHeap) * (G_shadowHeapTail - G_shadowHeap));
+         sizeof(*G_shadowHeap) * (G_shadowHeapTail - G_shadowHeap));
   G_shadowHeapTail = G_shadowHeap;
   G_shadowHp = hp;
   G_shadowHpLim = hp_lim;
@@ -171,7 +171,7 @@ bool verifyShadowHeap() {
     if (value != p->value) {
       fprintf(stderr, "Heap mismatch at: %p\n"   "  real heap:   %"
               FMT_WordX "  shadow heap: %" FMT_WordX "\n",
-	      p->address, value, p->value);
+              p->address, value, p->value);
       mismatches++;
     }
   }

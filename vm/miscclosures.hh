@@ -33,7 +33,7 @@ public:
   static const uint32_t UPD_frame_size = 2;
 
   static Closure *stg_BLACKHOLE_closure_addr;
-  
+
   static Closure *stg_STOP_closure_addr;
   static InfoTable *stg_IND_info;
   static InfoTable *stg_PAP_info;

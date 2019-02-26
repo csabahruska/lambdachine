@@ -11,7 +11,7 @@
 -- GHC Core uses @case@ expressions for both evaluation and branching,
 -- whereas GRIN uses @case@ only for branching and uses a special
 -- @eval@ instruction for evaluation.
--- 
+--
 --
 -- The main workers are 'buildWhnf' and 'buildThunk'.
 --

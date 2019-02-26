@@ -215,10 +215,10 @@ augment :: forall a. (forall b. (a->b->b) -> b -> b) -> [a] -> [a]
 augment g xs = g (:) xs
 
 {-# RULES
-"fold/build"    forall k z (g::forall b. (a->b->b) -> b -> b) . 
+"fold/build"    forall k z (g::forall b. (a->b->b) -> b -> b) .
                 foldr k z (build g) = g k z
 
-"foldr/augment" forall k z xs (g::forall b. (a->b->b) -> b -> b) . 
+"foldr/augment" forall k z xs (g::forall b. (a->b->b) -> b -> b) .
                 foldr k z (augment g xs) = g k (foldr k z xs)
 
 "foldr/id"                        foldr (:) [] = \x  -> x
@@ -276,7 +276,7 @@ unpackCString# addr = unpack 0#
 
 unpackAppendCString# :: Addr# -> [Char] -> [Char]
 {-# NOINLINE unpackAppendCString# #-}
-     -- See the NOINLINE note on unpackCString# 
+     -- See the NOINLINE note on unpackCString#
 unpackAppendCString# addr rest
   = unpack 0#
   where
@@ -308,7 +308,7 @@ quotInt, remInt, divInt, modInt :: Int -> Int -> Int
 (I# x) `modInt`   (I# y) = I# (x `modInt#`  y)
 
 quotRemInt :: Int -> Int -> (Int, Int)
-(I# x) `quotRemInt` (I# y) = 
+(I# x) `quotRemInt` (I# y) =
   case x `quotInt#` y of
     q ->
       case x `remInt#` y of

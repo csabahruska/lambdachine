@@ -225,7 +225,7 @@ private:
   void resetRecorderState();
   void replaySnapshot(Fragment *parent, SnapNo snapno, Word *base);
   int32_t checkFreeHeapAvail(Fragment *F, SnapNo snapno);
-  
+
   static const int kLastInsWasBranch = 0;
   static const int kIsReturnTrace = 1;
 
@@ -283,12 +283,12 @@ public:
 
   /// Maximum amount of stack space needed by this fragment. This is
   /// the sum of all spill slots and the highest snapshot write.
-  /// 
+  ///
   /// TODO: What if a side trace needs to increase this value?
   inline uint16_t frameSize() const { return frameSize_; }
 
   inline BcIns *startPc() const { return startPc_; }
-  
+
   inline MCode *entry() { return mcode_; }
   uint64_t literalValue(IRRef, Word* base);
   void restoreSnapshot(ExitNo, ExitState *);
@@ -331,17 +331,17 @@ private:
 
   BcIns **targets_;
   uint32_t numTargets_;
-  
+
   IRRef firstconstant_;  // Lowest IR constant. Biased with REF_BIAS
   IRRef nextins_;        // Next IR instruction. Biased with REF_BIAS
   IR *buffer_;           // Biased buffer
-  
+
   uint16_t frameSize_;
   uint16_t nsnaps_;
-  Snapshot *snaps_;      
+  Snapshot *snaps_;
   SnapshotData snapmap_;
   AbstractHeap heap_;
-  
+
   MCode *mcode_;
   //  size_t sizemcode_;
 

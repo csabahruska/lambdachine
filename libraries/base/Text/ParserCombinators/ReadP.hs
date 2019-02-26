@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude, Rank2Types, MagicHash #-}
 module Text.ParserCombinators.ReadP
-  ( 
+  (
   ReadP,      -- :: * -> *; instance Functor, Monad, MonadPlus
 
   get,        -- :: ReadP Char
@@ -8,7 +8,7 @@ module Text.ParserCombinators.ReadP
   (+++),      -- :: ReadP a -> ReadP a -> ReadP a
   (<++),      -- :: ReadP a -> ReadP a -> ReadP a
   gather,     -- :: ReadP a -> ReadP (String, a)
-  
+
   -- * Other operations
   pfail,      -- :: ReadP a
   eof,        -- :: ReadP ()
@@ -75,7 +75,7 @@ instance MonadPlus P where
 
   -- most common case: two gets are combined
   Get f1     `mplus` Get f2     = Get (\c -> f1 c `mplus` f2 c)
-  
+
   -- results are delivered as soon as possible
   Result x p `mplus` q          = Result x (p `mplus` q)
   p          `mplus` Result x q = Result x (p `mplus` q)
@@ -153,7 +153,7 @@ R f0 <++ q =
 
 gather :: ReadP a -> ReadP (String, a)
 gather (R m)
-  = R (\k -> gath id (m (\a -> return (\s -> k (s,a)))))  
+  = R (\k -> gath id (m (\a -> return (\s -> k (s,a)))))
  where
   gath :: (String -> String) -> P (String -> P b) -> P b
   gath l (Get f)      = Get (\c -> gath (l.(c:)) (f c))
@@ -171,8 +171,8 @@ char :: Char -> ReadP Char
 char c = satisfy (c ==)
 
 eof :: ReadP ()
-eof = do { s <- look 
-         ; if null s then return () 
+eof = do { s <- look
+         ; if null s then return ()
                      else pfail }
 
 string :: String -> ReadP String

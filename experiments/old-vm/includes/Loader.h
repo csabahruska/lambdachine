@@ -7,8 +7,8 @@
 
 #define STR_SEC_HDR_MAGIC       MSB_u4('B','C','S','T')
 #define CLOS_SEC_HDR_MAGIC      MSB_u4('B','C','C','L')
-#define INFO_MAGIC              MSB_u4('I','T','B','L') 
-#define CLOSURE_MAGIC           MSB_u4('C','L','O','S') 
+#define INFO_MAGIC              MSB_u4('I','T','B','L')
+#define CLOSURE_MAGIC           MSB_u4('C','L','O','S')
 
 typedef struct _StringTabEntry {
   u4 len;

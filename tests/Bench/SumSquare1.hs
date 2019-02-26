@@ -33,9 +33,9 @@ sum_aux !(I# a) (I# x:xs) = sum_aux (I# (a +# x)) xs
 
 {-# NOINLINE root #-}
 root :: Int -> Int
-root x = sum [ I# (a# *# b#) 
+root x = sum [ I# (a# *# b#)
              | a@(I# a#) <- enumFromTo'Int 1 x
-             , I# b# <- enumFromTo'Int a x ] 
+             , I# b# <- enumFromTo'Int a x ]
 
 test = root 20 == 23485
 

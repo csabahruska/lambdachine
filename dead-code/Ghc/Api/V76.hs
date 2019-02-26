@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE PatternGuards #-}
-module Ghc.Api.V76 
+module Ghc.Api.V76
   ( module Ghc.Api.V76
   , Phase(..)
   , ModDetails
@@ -152,7 +152,7 @@ runPipeline stop_phase hsc_env0 (input_fn, mb_phase)
   case output of
     Temporary ->
         return (dflags', output_fn)
-    _other -> 
+    _other ->
         do final_fn <- get_output_fn dflags' stop_phase maybe_loc
            when (final_fn /= output_fn) $ do
               let msg = ("Copying `" ++ output_fn ++"' to `" ++ final_fn ++ "'")
@@ -519,7 +519,7 @@ runPhase (Hsc src_flavour) input_fn dflags0 hooks
                                   else return SourceModified
 
   -- get the DynFlags
-        let next_phase = 
+        let next_phase =
               hookPostBackendPhase hooks hscPostBackendPhase
                                    dflags src_flavour hsc_lang
         output_fn  <- phaseOutputFilename next_phase
@@ -941,7 +941,7 @@ runPhase LlvmOpt input_fn dflags hooks
                 ++ map SysTools.Option lo_opts)
 
     return (LlvmLlc, output_fn)
-  where 
+  where
         -- we always (unless -optlo specified) run Opt since we rely on it to
         -- fix up some pretty big deficiencies in the code we generate
         llvmOpts = ["-mem2reg", "-O1", "-O2"]
@@ -967,7 +967,7 @@ runPhase LlvmLlc input_fn dflags hooks
                          False                            -> LlvmMangle
                          True | dopt Opt_SplitObjs dflags -> Splitter
                          True                             -> As
-                        
+
     output_fn <- phaseOutputFilename next_phase
 
     io $ SysTools.runLlvmLlc dflags
@@ -989,7 +989,7 @@ runPhase LlvmLlc input_fn dflags hooks
         -- On ARMv7 using LLVM, LLVM fails to allocate floating point registers
         -- while compiling GHC source code. It's probably due to fact that it
         -- does not enable VFP by default. Let's do this manually here
-        fpOpts = case platformArch (targetPlatform dflags) of 
+        fpOpts = case platformArch (targetPlatform dflags) of
                    ArchARM ARMv7 ext _ -> if (elem VFPv3 ext)
                                       then ["-mattr=+v7,+vfp3"]
                                       else if (elem VFPv3D16 ext)

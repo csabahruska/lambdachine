@@ -43,7 +43,7 @@
 #define OP_IFUNC                46
 
 // Also needed by the assembler.
-#define BCBIAS_J	0x8000
+#define BCBIAS_J        0x8000
 
 
 

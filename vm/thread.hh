@@ -13,7 +13,7 @@ public:
 
   static Thread *createThread(Capability *, Word stackSizeInWords);
   static Thread *createTestingThread(BcIns *pc, u4 framesize);
-  
+
   inline BcIns *pc() const { return pc_; }
   inline Word *stackStart() const { return stack_; }
   inline Word *stackLimit() const { return stack_ + stackSize_; }

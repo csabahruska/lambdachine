@@ -127,9 +127,9 @@ printHeapInfo(FILE *stream, JitState *J)
 // -- Finding Strongly Connected Components --------------------------
 //
 // The goal is to find heap nodes contain a (transitive) reference to
-// itself.  Such heap nodes must be allocated on-trace and cannot be 
+// itself.  Such heap nodes must be allocated on-trace and cannot be
 // pushed into side exits.
-// 
+//
 // Actually, this is a bit too conservative.  We only cannot sink
 // allocations that depend on a previous version of itself.  In the IR
 // this means that must be a chain of references from node N to itself
@@ -445,9 +445,9 @@ dfs1a(JitState *J, SccData *D, IRRef ref)
     } else if (ir->o == IR_PHI) {
       DBG_LVL(3, "SCC: Traversing PHI node %d (%d, %d)\n",
               irref_int(ref), irref_int(ir->op1), irref_int(ir->op2));
-      
+
       // The pre-loop contents of the PHI node, no PHI shadowing
-      dfs2a(J, D, ir->op1);  
+      dfs2a(J, D, ir->op1);
 
       // The second argument to a PHI node may be a reference to
       // another PHI node.
@@ -539,7 +539,7 @@ markUnsinkable(JitState *J, u2 hi, u1 mode)
 
 // This function is called on each node that is reachable from
 // a NEW node which is part of a loop.
-LC_FASTCALL void 
+LC_FASTCALL void
 markUnsinkable2_aux(JitState *J, IRRef ref)
 {
   IRIns *ir = IR(ref);
@@ -571,7 +571,7 @@ markUnsinkable2_aux(JitState *J, IRRef ref)
   }
 }
 
-// Mark all nodes reachable from cycles as 
+// Mark all nodes reachable from cycles as
 void
 markUnsinkable2(JitState *J, IRRef ref)
 {
@@ -607,7 +607,7 @@ heapSCCs(JitState *J)
 
   /* 1. Travers all UPDATEs and set the IND direct fields
      correctly. */
-  
+
 
   initStack(&D.s, J->cur.nheap);
   initStack(&D.p, J->cur.nheap);
@@ -709,10 +709,10 @@ heapSCCs(JitState *J)
     IRIns *ir1 = IR(ir->op1);
     IRIns *ir2 = IR(ir->op2);
     if (ir->o == IR_PHI &&
-	ir1->o == IR_NEW && ir2->o == IR_NEW &&
-	(!!irt_getmark(ir1->t) + !!irt_getmark(ir2->t)) == 1) {
+        ir1->o == IR_NEW && ir2->o == IR_NEW &&
+        (!!irt_getmark(ir1->t) + !!irt_getmark(ir2->t)) == 1) {
       DBG_LVL(3, "One of two PHI arguments is unsinkable, unsink both: (%d,%d)\n",
-	      irref_int(ir->op1), irref_int(ir->op2));
+              irref_int(ir->op1), irref_int(ir->op2));
       markUnsinkable3(J, ir->op1);
       markUnsinkable3(J, ir->op2);
     }
@@ -725,7 +725,7 @@ heapSCCs(JitState *J)
   /* At this point all unsinkable nodes have their mark set; any other
      nodes are sinkable.  Now transfer this information so that it can
      be picked up by [ir_issunken].  At the end of this step all nodes
-     will be unmarked. 
+     will be unmarked.
   */
   for (ref = J->chain[IR_NEW]; ref; ref = IR(ref)->prev) {
     IRIns *ir = IR(ref);
@@ -801,7 +801,7 @@ fixHeapOffsets(JitState *J)
      way. */
   IRRef old_nloop = J->cur.nloop;
   if (!J->cur.nloop) {
-    J->cur.nloop = J->cur.nins;	/* Reset at the end. */
+    J->cur.nloop = J->cur.nins; /* Reset at the end. */
   }
 
   for (ref = J->chain[IR_HEAPCHK]; ref >= REF_FIRST; ref = IR(ref)->prev) {
@@ -904,28 +904,28 @@ debugIRDeps(JitState *J)
   if (f == NULL)
     return; // Ignore errors
   fprintf(f, "digraph G {\n");
-  
+
   IRRef ref;
   for (ref = J->chain[IR_PHI]; ref >= REF_FIRST; ref = IR(ref)->prev) {
     IRIns *ir = IR(ref);
     fprintf(f, "\tphi%d [label=\"phi%d\"];\n",
             irref_int(ir->op1), irref_int(ir->op1));
     fprintf(f, "\tphi%d -> %d; phi%d -> %d;\n",
-	    irref_int(ir->op1), irref_int(ir->op1),
-	    irref_int(ir->op1), irref_int(ir->op2));
+            irref_int(ir->op1), irref_int(ir->op1),
+            irref_int(ir->op1), irref_int(ir->op2));
   }
 
-  
+
   for (ref = J->chain[IR_NEW]; ref >= REF_FIRST; ref = IR(ref)->prev) {
     fprintf(f, "\t%d [label=\"%d: new\"];\n",
-	    irref_int(ref), irref_int(ref));
+            irref_int(ref), irref_int(ref));
     HeapInfo *hp = getHeapInfo(&J->cur, IR(ref));
     u4 i;
     for (i = 0; i < hp->nfields; i++) {
       IRRef fref = getHeapInfoField(&J->cur, hp, i);
       fprintf(f, "\t%d -> %s%d;\n",
-	      irref_int(ref),
-	      ref > J->cur.nloop && isLoopVariant(J, fref) ? "phi" : "",
+              irref_int(ref),
+              ref > J->cur.nloop && isLoopVariant(J, fref) ? "phi" : "",
               irref_int(fref));
     }
   }
@@ -933,9 +933,9 @@ debugIRDeps(JitState *J)
   for (ref = J->chain[IR_UPDATE]; ref >= REF_FIRST; ref = IR(ref)->prev) {
     IRIns *ir = IR(ref);
     fprintf(f, "\t%s%d -> %s%d [color=red];\n",
-	    ref > J->cur.nloop && isLoopVariant(J, ir->op1) ?
+            ref > J->cur.nloop && isLoopVariant(J, ir->op1) ?
             "phi" : "", irref_int(ir->op1),
-	    ref > J->cur.nloop && isLoopVariant(J, ir->op2) ?
+            ref > J->cur.nloop && isLoopVariant(J, ir->op2) ?
             "phi" : "", irref_int(ir->op2));
   }
 

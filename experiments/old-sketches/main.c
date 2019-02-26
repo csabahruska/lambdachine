@@ -21,14 +21,14 @@ VMState *create_thread(GblState *gbl)
   // TODO: allocate everything on the GC'd heap
   VMState* vms = malloc(sizeof(VMState));
   Word* stack = malloc(DEFAULT_STACK_SIZE * sizeof(Word));
-  
+
   vms->gbl_state = gbl;
   vms->saved_cstack = 0; // set by interpreter
   vms->stack = stack;
   vms->stack_limit = stack + DEFAULT_STACK_SIZE;
   vms->base = stack;
   vms->top = stack;
-  
+
   return vms;
 }
 
@@ -62,8 +62,8 @@ void lc_pushptr(VMState *L, void *p)
 {
   if (L->top >= L->stack_limit)
     lc_stackoverflow();
-  
-  *(L->top)++ = (Word)p;  
+
+  *(L->top)++ = (Word)p;
 }
 
 void lc_printstate(VMState *L)
@@ -91,7 +91,7 @@ extern uint32_t vm_bench(uint32_t count);
  *     nargs is the number of arguments, nresults is the number of
  *     results.
  *  4. After the call, the last result is on top of the stack.
- * 
+ *
  */
 
 int main(int argc, char* argv[])
@@ -135,17 +135,17 @@ int main(int argc, char* argv[])
   testcode[7] = BCINS_AJ(OP_JMP, 0, -8); // goto 0
   testcode[8] = BCINS_AD(OP_EXIT, 0, 0);
 
-  
+
 /*   printf("%p\n", vm_leave); */
   printf("Dispatch Table: %p\n", gbl.dispatch_tbl);
   c = getc(stdin);
 
   printf("vm: %x\n", vm_resume(L));
   //printf("acc: %x\n", vm_bench(count));
-  
+
   lc_printstate(L);
 
   destroy_thread(L);
-  
+
   return 0;
 }

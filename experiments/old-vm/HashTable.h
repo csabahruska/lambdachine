@@ -12,7 +12,7 @@ typedef struct _HashEntry {
 } HashEntry;
 
 typedef struct _HashTable {
-  u4          size;		/* Must be power of 2 */
+  u4          size;             /* Must be power of 2 */
   u4          threshold;
   u4          entries;
   HashEntry **table;

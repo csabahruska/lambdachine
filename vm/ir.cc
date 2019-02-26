@@ -845,7 +845,7 @@ void CallStack::debugPrint(ostream &out, IRBuffer *buf, StackNodeRef node) const
     IRRef addr_ref = address(ref);
     if (addr_ref) {
       IR::printIRRef(out, addr_ref);
-      if (buf) 
+      if (buf)
         out << "/" << (Word*)buf->literalValue(addr_ref);
       out << ", ";
     } else

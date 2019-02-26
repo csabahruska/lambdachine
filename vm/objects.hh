@@ -12,10 +12,10 @@ typedef struct _Code {
   u1   framesize;               /* No. of local variables. */
   u1   arity;                   /* No. of function arguments.  */
   u2   sizecode;                /* No. of instructions in bytecode. */
-  u2   sizelits;		/* No. of literals */
+  u2   sizelits;                /* No. of literals */
   u2   sizebitmaps;             /* No. of bitmaps (in multiples of `u2') */
   /* INVARIANT: framesize >= arity */
-  Word  *lits;			/* Literals */
+  Word  *lits;                  /* Literals */
   u1    *littypes;              /* Types of literals.  See LitType. */
   BcIns *code;                  /* The bytecode followed by bitsets. */
   /* INVARIANT: code != NULL */

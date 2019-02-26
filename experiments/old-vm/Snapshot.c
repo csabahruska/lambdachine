@@ -139,7 +139,7 @@ void
 addSnapshot(JitState *J)
 {
   DBG_PR("Adding snapshot: base=%d+%d, min=%d\n",
-	 J->baseslot, J->maxslot, J->minslot);
+         J->baseslot, J->maxslot, J->minslot);
   Word nsnap = J->cur.nsnap;
   Word nsnapmap = J->cur.nsnapmap;
   // Merge snapshots if:
@@ -184,7 +184,7 @@ printSnapshot(Fragment *F, SnapShot *snap, SnapEntry *map)
       fprintf(stderr, "---- ");
   }
   fprintf(stderr, "pc = %p, ref = %d, base = %d\n",
-	  pc, irref_int(snap->ref), baseslot);
+          pc, irref_int(snap->ref), baseslot);
 }
 
 #if LC_HAS_ASM_BACKEND
@@ -351,7 +351,7 @@ void restoreSnapshot(SnapNo snapno, void *exptr) {
 
   // exit(0xac);
 }
-#endif	/* LC_HAS_ASM_BACKEND */
+#endif  /* LC_HAS_ASM_BACKEND */
 
 #undef IR
 

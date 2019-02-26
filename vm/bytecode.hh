@@ -125,7 +125,7 @@ class BcIns {
  public:
 
   BcIns() : raw_(kSTOP) {}
-  
+
   static const int32_t kBranchBias = 0x8000;
 
   static const u4 kMaxCallArgs = 13;
@@ -207,7 +207,7 @@ class BcIns {
   inline int16_t sd() const { return static_cast<int16_t>(raw_ >> 16); }
   inline int16_t j() const {
     return static_cast<int16_t>
-      (static_cast<int32_t>(raw_ >> 16) - kBranchBias); 
+      (static_cast<int32_t>(raw_ >> 16) - kBranchBias);
   }
   const char *name() const;
   InsFormat format() const;

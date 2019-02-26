@@ -1,5 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
-module Lambdachine.Utils 
+module Lambdachine.Utils
   ( module Lambdachine.Utils.Pretty
   , module Lambdachine.Utils.Unique
   , expectJust

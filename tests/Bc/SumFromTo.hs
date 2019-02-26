@@ -61,13 +61,13 @@ upto from to =
 sum :: Int -> List Int -> Int
 sum acc Nil = acc
 sum acc (Cons x xs) =
-  let acc' = (acc `plusInt` x) in 
+  let acc' = (acc `plusInt` x) in
   acc' `seq` sum acc' xs
 
 {-
 replicate :: Int -> a -> List a
 replicate n x =
-  case n of 
+  case n of
     I# 0# -> Nil
     _ -> Cons x (replicate (n `minusInt` I# 1#) x)
 -}
@@ -89,7 +89,7 @@ concat :: List (List a) -> List a
 concat xs = foldr append Nil xs
 -}
 --concatMap :: (a -> List b) -> List a -> List a
---concatMap f xs = foldr 
+--concatMap f xs = foldr
 
 zero :: Int
 zero = I# 0#
@@ -107,18 +107,18 @@ test1 = sum zero (decr (I# 15#) Nil)
 --test = f (I# 5#) A0
 
 --data A = A1 A | A2 A
--- data B = B1 A 
+-- data B = B1 A
 {-
 f :: Int -> A -> A
 f x a =
-  if x `gtInt` zero then 
+  if x `gtInt` zero then
     let a' = A1 x a
         x' = x `minusInt` one
     in x' `seq` f x' a'
    else a
 
 --lenA :: A -> Int -> Int
---lenA 
+--lenA
 
 f :: Int -> A -> A -> A
 f !x !a !b =
@@ -171,7 +171,7 @@ foldl :: (a -> b -> a) -> a -> List b -> a
 foldl f z Nil = z
 foldl f z (Cons x xs) = foldl f (z `f` x) xs
 
-test2 a b = 
+test2 a b =
   let x = Cons a y
       y = Cons b x
   in x

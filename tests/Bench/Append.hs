@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude, BangPatterns, MagicHash, CPP #-}
 -- RUN: %bc_vm_chk
--- CHECK: @Result@ IND -> GHC.Bool.True`con_info 
+-- CHECK: @Result@ IND -> GHC.Bool.True`con_info
 #ifdef BENCH_GHC
 import Prelude ( print )
 #else

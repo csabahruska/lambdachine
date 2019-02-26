@@ -76,7 +76,7 @@ extend_env (LocalEnv m) var val = LocalEnv (M.insert var val m)
 
 extendEnvN :: LocalEnv -> [Value] -> [RValue] -> LocalEnv
 extendEnvN env_ vs_ rs_ = go env_ vs_ rs_
- where 
+ where
    go env [] [] = env
    go env (v:vs) (r:rs) = go (extendEnv env v r) vs rs
    go _ _ _ = error $ "extendEnvN:" ++ pretty (vs_, rs_)
@@ -91,7 +91,7 @@ val env val_ = case val_ of
   Hole n -> RHole
   Node v vs -> RNode (val env (Var v)) (map (val env . Var) vs)
  where
-   lu v = 
+   lu v =
      expectJust ("val:" ++ show (v, idDetails v) ) $ lookupEnv env v
 
 -- | Return all the 'Loc's (pointers) contained within this 'RValue'.
@@ -110,7 +110,7 @@ pprHeapLocs (Heap m _) recurse locs = go S.empty locs
          Just val ->
            let ls' | recurse = rval_locs val ++ ls
                    | otherwise = ls
-           in (ppr l <> text "=>" <> ppr val) : 
+           in (ppr l <> text "=>" <> ppr val) :
               go (S.insert l visited) ls'
 
 eval :: GlobalEnv -> Heap -> LocalEnv -> Int -> Expr -> IO (RValue, Heap)
@@ -118,7 +118,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
   e1 :>>= (p :-> e2) -> do
     (v, hp') <- eval gbl hp env n e1
     pprint $ indent (n+2) $ text "--" <+> ppr p <> char '=' <> ppr v
-           <+> brackets (hsep $ punctuate (char ';') $ 
+           <+> brackets (hsep $ punctuate (char ';') $
                          pprHeapLocs hp' False (rval_locs v))
     let env' = extendEnv env p v
     eval gbl hp' env' n e2
@@ -132,7 +132,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
     pprint $ indent n $ ppr expr
     case split2 ls of
       (a, ls') ->
-        let 
+        let
           l = supplyValue a
           hp' = Heap (M.insert l (val env v) m) ls'
         in return (RLoc l, hp')
@@ -154,7 +154,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
           eval gbl hp env n k
       v ->
         error $ "case:" ++ pretty v
-        
+
   App f xs
     | isTopLevelId f -> do
         call_toplevel_fun n f (map (val env . Var) xs)
@@ -166,7 +166,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
     | show (idName op) == "GHC.Prim.>#" -> do
       pprint $ indent n $ ppr expr
       case map (val env . Var) xs of
-        [RInt n, RInt m] -> 
+        [RInt n, RInt m] ->
           return (RNode (RGlobal (if n > m then trueDataConId else falseDataConId)) [], hp)
   Eval upd x -> do
     let v = val env (Var x)
@@ -192,10 +192,10 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
   _ -> error (pretty expr)
  where
 --   selalt tag ((
-   selalt tag ((Node t vs :> e):alts) 
+   selalt tag ((Node t vs :> e):alts)
      | tag == t = (map Var vs, e)
      | otherwise = selalt tag alts
---   selalt tag ((Var 
+--   selalt tag ((Var
    selalt_lit n ((p :> e):alts) = e
    call_toplevel_fun n f vals = do
      let Just fun = lookupGblEnv gbl f
@@ -203,7 +203,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
          body = funDefBody fun
      pprint $ indent n $
        ppr f <> linebreak <>
-       char '(' <+> text "--" <+> 
+       char '(' <+> text "--" <+>
             align (ppr f <+> ppr_bind_pairs args vals <> linebreak <>
                    (sep (pprHeapLocs hp True (concatMap rval_locs vals))))
      let env' = extendEnvN env (map Var args) vals
@@ -212,7 +212,7 @@ eval gbl hp@(Heap m ls) env n expr = case expr of
      return r
    ppr_bind_pairs args vals =
      hsep (map (\(a, v) -> ppr a <> char '=' <> ppr v) (zip args vals))
-     
+
 
 runTest1 :: Module -> IO ()
 runTest1 mdl = do
@@ -222,8 +222,8 @@ runTest1 mdl = do
   hp0 <- newHeap
   _ <- eval gbl hp0 env0 0 e
   return ()
-        
+
 --  App f args ->
-    
---eval :: 
+
+--eval ::
 

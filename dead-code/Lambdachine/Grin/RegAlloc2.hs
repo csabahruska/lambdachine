@@ -50,7 +50,7 @@ renameBCO :: BytecodeObject BcVar BcConst
 renameBCO BCO{ bcoCode = code } =
   let c = renameCode code in undefined
 
---renameCode :: [BcInstr BcVar BcConst] -> 
+--renameCode :: [BcInstr BcVar BcConst] ->
 renameCode code = runRnM $ rename_code code
 
 rename_code (Move d s) = do

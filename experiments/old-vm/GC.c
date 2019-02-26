@@ -169,7 +169,7 @@ scavengeFrame(Word *base, BCIns *pc)
 
   bitmaps = getPointerMask(pc);
   if (bitmaps == NULL) {
-    // If the bitmask 
+    // If the bitmask
     fprintf(stderr, "TODO: 0 bitmasks\n");
     exit(3);
   }
@@ -200,7 +200,7 @@ scavengeStack(Word *base, Word *top, BCIns *pc)
     IF_DBG(printInlineBitmap(stderr, pc - 1));
 
     scavengeFrame(base, pc);
-    
+
     pc = (BCIns*)base[-2];
     frame_top = (Word*)&base[-3];
     base = (Word*)base[-3];
@@ -239,7 +239,7 @@ performGC(Capability *cap)
   G_gc.scav_done = NULL; // Surviver blocks end up here
   M->full = NULL;
   M->nfull = 0;
-  
+
   LC_ASSERT(lo <= base);
 
   DBG_PR("Garbage collecting...\n"
@@ -272,7 +272,7 @@ performGC(Capability *cap)
         bd = tmp;
       }
       M->full = NULL;
-    
+
       while (G_gc.scav_todo) {
         BlockDescr *bd = G_gc.scav_todo;
         G_gc.scav_todo = bd->link;
@@ -282,16 +282,16 @@ performGC(Capability *cap)
         G_gc.scav_done = bd;
       }
     }
-    
+
     // All full blocks scavenged, need to scavenge current block.
     {
       BlockDescr *bd = M->current;
       scavengeBlock(bd);
-      
+
       // Scavenging may have filled more blocks.  In that case we have:
-      // 
+      //
       //   - M->current is different from bd
-      // 
+      //
       //   - bd must be full now but it is also linked into the
       //     M->full list so we can't just unlink it here.
       //
@@ -316,7 +316,7 @@ performGC(Capability *cap)
   CLEAR_FLAG(M->current->flags, BF_SCAVENGED);
 
   M->nextgc = 2 * M->nfull + 2;
-  
+
   // Push now-dead blocks back onto free list.
   {
     BlockDescr *bd, *tmp;
@@ -361,7 +361,7 @@ Word *
 allocForCopy(u4 size)
 {
   Word *p = allocClosureDuringGC(size);
-  
+
   return p;
 }
 
@@ -372,7 +372,7 @@ copy(Closure **p, const InfoTable *info, Closure *src, u4 size)
   u4 i;
   to = allocForCopy(size);
   DBG_LVL(2, " => " COLOURED(COL_GREEN, "%p") " / ", to);
-  
+
   TICK_GC_WORDS_COPIED(size);
 
   from = (Word*)src;
@@ -424,7 +424,7 @@ evacuate(Closure **p)
     // Indirections from the static heap may point into the live
     // heap, so we must follow them as roots.
   }
-  
+
   switch (info->type) {
   case CONSTR:
     DBG_LVL(2, " -C(%d)-> ", (int)CONSTR_SIZE(info));
@@ -487,7 +487,7 @@ scavengeBlock(BlockDescr *bd)
   // We might be evacuating into the same block that we're scavenging.
   // That is `bd->free` might change during the loop, so recheck here.
   while ((char*)p < bd->free) {
-    
+
     info = getInfo(p);
     q = p;
 
@@ -516,36 +516,36 @@ scavengeBlock(BlockDescr *bd)
       break;
     case PAP:
       {
-	/* PAPs use a non-standard closure layout.  The size is
-	   stored in the closure itself (instead of the info table) and
-	   the pointerhood of the payload is determined from the
-	   function parameter (we cannot have nested PAPs). */
-	PapClosure *pap = (PapClosure*)p;
-	Closure *fun = pap->fun;
-	LC_ASSERT(fun != NULL);
+        /* PAPs use a non-standard closure layout.  The size is
+           stored in the closure itself (instead of the info table) and
+           the pointerhood of the payload is determined from the
+           function parameter (we cannot have nested PAPs). */
+        PapClosure *pap = (PapClosure*)p;
+        Closure *fun = pap->fun;
+        LC_ASSERT(fun != NULL);
 
-	const FuncInfoTable *finfo = getFInfo(fun);
-	LC_ASSERT(finfo != NULL && finfo->i.type == FUN);
-	LC_ASSERT(finfo->code.arity == pap->arity + pap->nargs);
-	LC_ASSERT(finfo->code.arity <= 32);
+        const FuncInfoTable *finfo = getFInfo(fun);
+        LC_ASSERT(finfo != NULL && finfo->i.type == FUN);
+        LC_ASSERT(finfo->code.arity == pap->arity + pap->nargs);
+        LC_ASSERT(finfo->code.arity <= 32);
 
-	u4 bitmap = finfo->i.layout.bitmap;
-	LC_ASSERT(bitmap < (1 << finfo->code.arity));
+        u4 bitmap = finfo->i.layout.bitmap;
+        LC_ASSERT(bitmap < (1 << finfo->code.arity));
 
-	evacuate(&pap->fun);
+        evacuate(&pap->fun);
 
-	int i = pap->nargs;
-	Closure **payload = (Closure **)&pap->payload[0];
-	while (i > 0 && bitmap != 0) {
-	  if (bitmap & 1) {
-	    evacuate(payload);
-	  }
-	  --i;
-	  bitmap >>= 1;
-	  ++payload;
-	}
-	p += wordsof(PapClosure) + pap->nargs;
-	break;
+        int i = pap->nargs;
+        Closure **payload = (Closure **)&pap->payload[0];
+        while (i > 0 && bitmap != 0) {
+          if (bitmap & 1) {
+            evacuate(payload);
+          }
+          --i;
+          bitmap >>= 1;
+          ++payload;
+        }
+        p += wordsof(PapClosure) + pap->nargs;
+        break;
       }
     default:
       fprintf(stderr, "Don't know how to scavenge objects of type %d, yet\n",

@@ -55,7 +55,7 @@ class Read a where
   readList     :: ReadS [a]
   readPrec     :: ReadPrec a
   readListPrec :: ReadPrec [a]
-  
+
   -- default definitions
   readsPrec    = readPrec_to_S readPrec
   readList     = readPrec_to_S (list readPrec) 0
@@ -111,7 +111,7 @@ list readx =
          "]"           -> return []
          "," | started -> listNext
          _             -> pfail
-  
+
   listNext =
     do x  <- reset readx
        xs <- listRest True
@@ -307,8 +307,8 @@ read_tup8 = do  (a,b,c,d) <- read_tup4
 
 
 instance (Read a, Read b, Read c) => Read (a, b, c) where
-  readPrec = wrap_tup (do { (a,b) <- read_tup2; read_comma 
-                          ; c <- readPrec 
+  readPrec = wrap_tup (do { (a,b) <- read_tup2; read_comma
+                          ; c <- readPrec
                           ; return (a,b,c) })
   readListPrec = readListPrecDefault
   readList     = readListDefault

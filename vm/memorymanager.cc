@@ -153,7 +153,7 @@ void Region::initBlocks(SmallObjectRegionData *r) {
   // available since that is where the meta data is stored.  We simply
   // mark them as unavailable.
   Word first_avail = sizeof(SmallObjectRegionData) / Block::kBlockSize;
-  
+
   char *metadata = reinterpret_cast<char *>(r);
   for (Word i = 0; i < first_avail; i++) {
     r->blocks_[i].flags_ = Block::kMetadata;
@@ -209,7 +209,7 @@ MemoryManager::MemoryManager()
     evacuatedLargeObjects_(NULL),
     scavengedLargeObjects_(NULL),
     freeLargeRegions_(NULL),
-    minHeapSize_(2), 
+    minHeapSize_(2),
     nextGC_(minHeapSize_),
     allocated_(0), num_gcs_(0)
 {
@@ -345,7 +345,7 @@ MemoryManager::bumpAllocatorFullNoGC(char **heap, char **heaplim)
     ++nextGC_;
     return 1;
   }
-  
+
   blockFull(&closures_);
   getBumpAllocatorBounds(heap, heaplim);
   return 0;
@@ -955,7 +955,7 @@ bool MemoryManager::sanityCheckClosure(SEEN_SET_TYPE &seen, Closure *cl) {
     case FUN: {
       u4 bitmap = info->layout().bitmap;
       u4 size = info->size();
-      
+
       if (!(bitmap < (1UL << size))) {
         cerr << "Bitmap " << hex << bitmap << " inconsistent with size "
              << dec << size << " in closure " << p << endl;
@@ -1080,7 +1080,7 @@ bool MemoryManager::sanityCheckStack(SEEN_SET_TYPE &seen, Word *base, Word *top,
   }
   if (!sanityCheckFrame(seen, base, top, bitmask))
     return false;
-  
+
   top = base - 3;
   pc = (BcIns *)base[-2];
   base = (Word *)base[-3];
@@ -1092,7 +1092,7 @@ bool MemoryManager::sanityCheckStack(SEEN_SET_TYPE &seen, Word *base, Word *top,
     pc = (BcIns *)base[-2];
     base = (Word *)base[-3];
   }
-  
+
   return true;
 }
 

@@ -4,7 +4,7 @@
 -- Module      :  Data.List
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  stable
 -- Portability :  portable
@@ -32,7 +32,7 @@ module Data.List
    , intersperse       -- :: a -> [a] -> [a]
    , intercalate       -- :: [a] -> [[a]] -> [a]
    , transpose         -- :: [[a]] -> [[a]]
-   
+
    , subsequences      -- :: [a] -> [[a]]
    , permutations      -- :: [a] -> [[a]]
 
@@ -313,7 +313,7 @@ nubBy eq l              = nubBy' l []
 -- Not exported:
 -- Note that we keep the call to `eq` with arguments in the
 -- same order as in the reference implementation
--- 'xs' is the list of things we've seen so far, 
+-- 'xs' is the list of things we've seen so far,
 -- 'y' is the potential new element
 elem_by :: (a -> a -> Bool) -> a -> [a] -> Bool
 elem_by _  _ []         =  False
@@ -434,7 +434,7 @@ select p x ~(ts,fs) | p x       = (x:ts,fs)
 mapAccumL :: (acc -> x -> (acc, y)) -- Function of elt of input list
                                     -- and accumulator, returning new
                                     -- accumulator and elt of result list
-          -> acc            -- Initial accumulator 
+          -> acc            -- Initial accumulator
           -> [x]            -- Input list
           -> (acc, [y])     -- Final accumulator and result list
 mapAccumL _ s []        =  (s, [])

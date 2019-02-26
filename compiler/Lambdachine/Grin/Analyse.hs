@@ -13,7 +13,7 @@ module Lambdachine.Grin.Analyse
 {-
     -- * Liveness Analysis with Symbolic Live Ranges
     SymLives(..), SymRange(..), symLivenessLattice,
--}  
+-}
   )
 where
 
@@ -66,7 +66,7 @@ analyseAndRewriteBCOBwd bco@BcObject{} pass exitfacts = do
                    (bcoCode bco) exitfacts
   return (bco{ bcoCode = g' }, f')
 
-livenessAnalysis2 :: {- FuelMonad m => -} Monad m => 
+livenessAnalysis2 :: {- FuelMonad m => -} Monad m =>
                      GlobalEnv -> BwdPass m BcIns LiveVars
 livenessAnalysis2 env = --debugBwdJoins trace (const True) $
   BwdPass { bp_lattice = livenessLattice
@@ -182,8 +182,8 @@ isVoid :: GlobalEnv -> BcVar -> Bool
 isVoid env (BcVar _ ty) = transType env ty == VoidTy
 isVoid _   (BcReg _ ty) = ty == VoidTy
 
-deadAssignmentElim :: 
-  forall m. FuelMonad m => 
+deadAssignmentElim ::
+  forall m. FuelMonad m =>
      BwdRewrite m BcIns LiveVars
   -- "forall" needed because because of local type signature below.
 deadAssignmentElim = mkBRewrite rewrite

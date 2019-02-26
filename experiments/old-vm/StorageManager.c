@@ -11,7 +11,7 @@
 
 /* mmap-related stuff */
 
-#define MMAP_PROT		(PROT_READ|PROT_WRITE)
+#define MMAP_PROT               (PROT_READ|PROT_WRITE)
 
 #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
 # define MAP_ANONYMOUS          MAP_ANON
@@ -76,7 +76,7 @@ BlockDescr *
 allocBlock(StorageManagerState *M)
 {
   // Where to allocate next
-  static char *alloc_hint = (char*)ROUND_UP_TO_BLOCK_SIZE(MMAP_REGION_START); 
+  static char *alloc_hint = (char*)ROUND_UP_TO_BLOCK_SIZE(MMAP_REGION_START);
   size_t size = BLOCK_SIZE;
   char *ptr;
   // int retry = 0;
@@ -111,7 +111,7 @@ allocBlock(StorageManagerState *M)
     ri->end = ptr + size;
     M->regions = ri;
   }
- 
+
   BlockDescr *blk = initBlock(ptr);
 
   M->ntotal++;
@@ -228,7 +228,7 @@ void *tryAllocClosure(u4 nwords)
     void *p = G_storage.hp;
     G_storage.hp += nwords;
     //printf(">> Allocated closure: %p-%p (%u)\n",
-    //	   p, G_storage.hp, nwords);
+    //     p, G_storage.hp, nwords);
     DBG_PR("allocClosure_(%d,...) => %p\n", nwords, p);
     return p;
   } else {
@@ -267,7 +267,7 @@ void* allocClosure_(u4 nwords, Thread *T, BCIns *pc, Word *base)
     void *p = G_storage.hp;
     G_storage.hp += nwords;
     //printf(">> Allocated closure: %p-%p (%u)\n",
-    //	   p, G_storage.hp, nwords);
+    //     p, G_storage.hp, nwords);
     DBG_PR("allocClosure_(%d,...) => %p\n", nwords, p);
     return p;
   }
@@ -289,7 +289,7 @@ void* allocClosure(u4 nwords)
     void *p = G_storage.hp;
     G_storage.hp += nwords;
     //printf(">> Allocated closure: %p-%p (%u)\n",
-    //	   p, G_storage.hp, nwords);
+    //     p, G_storage.hp, nwords);
     DBG_PR("allocClosure(%d) => %p\n", nwords, p);
     return p;
   }
@@ -310,7 +310,7 @@ void *allocClosureDuringGC(u4 nwords)
     //DBG_PR("allocClosureDuringGC(%d) => %p\n", nwords, p);
     return p;
   }
-  
+
   // Block full
   BlockDescr *blk = G_storage.current;
   G_storage.current = NULL;
@@ -354,7 +354,7 @@ void* allocStaticClosure(u4 nwords)
     void *p = blk->free;
     blk->free += nwords * sizeof(Word);
     //printf(">> Allocated static closure: %p-%p (%u)\n",
-    //	   p, blk->free, nwords);
+    //     p, blk->free, nwords);
     return p;
   }
   addStaticClosuresBlock(&G_storage);
@@ -376,7 +376,7 @@ isManagedMemory(void *p)
 int looksLikeInfoTable(void *p) {
   return (isManagedMemory(p) &&
           (PTR_TO_BLOCK_DESCR(p)->flags & BF_CONTENTS_MASK) ==
-	  BF_INFO_TABLES)
+          BF_INFO_TABLES)
     || p == &stg_IND_info;;
 }
 
@@ -384,7 +384,7 @@ int looksLikeClosure(void *p)
 {
   return (isManagedMemory(p) &&
           (PTR_TO_BLOCK_DESCR(p)->flags & BF_CONTENTS_MASK) ==
-	  BF_CLOSURES)
+          BF_CLOSURES)
     || looksLikeStaticClosure(p);
 }
 
@@ -392,7 +392,7 @@ int looksLikeStaticClosure(void *p)
 {
   return (isManagedMemory(p) &&
           (PTR_TO_BLOCK_DESCR(p)->flags & BF_CONTENTS_MASK) ==
-	  BF_STATIC_CLOSURES);
+          BF_STATIC_CLOSURES);
 }
 
 int isClosure(void *p)

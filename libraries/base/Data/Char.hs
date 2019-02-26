@@ -35,7 +35,7 @@ module Data.Char
     -- * String representations
     -- , showLitChar       -- :: Char -> ShowS
     -- , lexLitChar        -- :: ReadS String
-    -- , readLitChar       -- :: ReadS Char 
+    -- , readLitChar       -- :: ReadS Char
 
      -- Implementation checked wrt. Haskell 98 lib report, 1/99.
     ) where
@@ -47,7 +47,7 @@ import GHC.Unicode
 import GHC.Num
 import GHC.Enum
 
--- | Convert a single digit 'Char' to the corresponding 'Int'.  
+-- | Convert a single digit 'Char' to the corresponding 'Int'.
 -- This function fails unless its argument satisfies 'isHexDigit',
 -- but recognises both upper and lower-case hexadecimal digits
 -- (i.e. @\'0\'@..@\'9\'@, @\'a\'@..@\'f\'@, @\'A\'@..@\'F\'@).

@@ -17,7 +17,7 @@ f acc (I# n : ns) =
 
 upto :: Int# -> Int# -> [Int]
 upto lo hi =
-  if isTrue# (lo ># hi) then [] else 
+  if isTrue# (lo ># hi) then [] else
     let !lo' = lo +# 1# in I# lo : upto lo' hi
 
 test = isTrue# ((f 0# (upto 1# 123#)) ==# 7626#)

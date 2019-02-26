@@ -24,45 +24,45 @@
 
 /* Assembler state. */
 typedef struct ASMState {
-  RegCost cost[RID_MAX];/* Reference to IR instruction currently in the register 
+  RegCost cost[RID_MAX];/* Reference to IR instruction currently in the register
                          *  and blended allocation cost for regs. */
-  MCode *mcp;		/* Current MCode pointer (grows down). */
-  MCode *mclim;		/* Lower limit for MCode memory + red zone. */
+  MCode *mcp;           /* Current MCode pointer (grows down). */
+  MCode *mclim;         /* Lower limit for MCode memory + red zone. */
 
-  IRIns *ir;		/* Copy of pointer to IR instructions/constants. */
-  JitState *J;		/* JIT compiler state. */
+  IRIns *ir;            /* Copy of pointer to IR instructions/constants. */
+  JitState *J;          /* JIT compiler state. */
 
-  x86ModRM mrm;		/* Fused x86 address operand. */
+  x86ModRM mrm;         /* Fused x86 address operand. */
 
-  SnapNo snapno;	/* Current snapshot number. */
-  IRRef snapref;	/* Current snapshot is active after this reference. */
-  SnapNo loopsnapno;	/* Loop snapshot number. */
+  SnapNo snapno;        /* Current snapshot number. */
+  IRRef snapref;        /* Current snapshot is active after this reference. */
+  SnapNo loopsnapno;    /* Loop snapshot number. */
 
-  RegSet freeset;	/* Set of free registers. */
-  RegSet modset;	/* Set of modified registers. */
+  RegSet freeset;       /* Set of free registers. */
+  RegSet modset;        /* Set of modified registers. */
 
-  RegSet phiset;	/* Set of registers assigned to RHS of PHI nodes. */
+  RegSet phiset;        /* Set of registers assigned to RHS of PHI nodes. */
   IRRef1 phireg[RID_MAX];  /* Maps register to LHS PHI references. */
 
   i4 spill;             /* Next spill slot. */
   i4 spill_offset;      /* Offset from base reg into the spill area */
 
-  IRRef curins;		/* Reference of current instruction. */
-  IRRef stopins;	/* Stop assembly before hitting this instruction. */
-  IRRef orignins;	/* Original T->nins. */
+  IRRef curins;         /* Reference of current instruction. */
+  IRRef stopins;        /* Stop assembly before hitting this instruction. */
+  IRRef orignins;       /* Original T->nins. */
 
-  Fragment *T;		/* Trace to assemble. */
-  
-  MCode *mcbot;		/* Bottom of reserved MCode. */
-  MCode *mctop;		/* Top of generated MCode. */
+  Fragment *T;          /* Trace to assemble. */
+
+  MCode *mcbot;         /* Bottom of reserved MCode. */
+  MCode *mctop;         /* Top of generated MCode. */
 
 } ASMState;
 
 /* -- Helper Functions ---------------------------------------------------- */
-#define IR(ref)			(&as->ir[(ref)])
+#define IR(ref)                 (&as->ir[(ref)])
 
 /* Sparse limit checks using a red zone before the actual limit. */
-#define MCLIM_REDZONE	64
+#define MCLIM_REDZONE   64
 #define checkmclim(as) \
   if (LC_UNLIKELY(as->mcp < as->mclim)) asm_mclimit(as)
 
@@ -168,9 +168,9 @@ static uint32_t asm_cmpmap(IROp opcode) {
  *  needed.
  */
 #include "RA_debug.h"
-#define ra_free(as, r)		rset_set(as->freeset, (r))
-#define ra_modified(as, r)	rset_set(as->modset, (r))
-#define ra_used(ir)		(ra_hasreg((ir)->r) || ra_hasspill((ir)->s))
+#define ra_free(as, r)          rset_set(as->freeset, (r))
+#define ra_modified(as, r)      rset_set(as->modset, (r))
+#define ra_used(ir)             (ra_hasreg((ir)->r) || ra_hasspill((ir)->s))
 
 
 /* Setup register allocator. */
@@ -327,11 +327,11 @@ static Reg ra_allocref(ASMState *as, IRRef ref, RegSet allow)
     if (ra_hashint(ir->r)) {
       r = ra_gethint(ir->r);
       if (rset_test(pick, r))  /* Use hint register if possible. */
-	goto found;
+        goto found;
       /* Rematerialization is cheaper than missing a hint. */
       if (rset_test(allow, r) && emit_canremat(regcost_ref(as->cost[r]))) {
-	ra_rematk(as, regcost_ref(as->cost[r]));
-	goto found;
+        ra_rematk(as, regcost_ref(as->cost[r]));
+        goto found;
       }
       RA_DBGX((as, "hintmiss  $f $r", ref, r));
     }
@@ -528,7 +528,7 @@ static void asm_snap_sunken_alloc(ASMState *as, IRIns *ins)
   HeapInfo *hpi = getHeapInfo(F, ins);
   int j;
   ins->r = RID_HP;  /* Mark as visited, ignored by codegen */
-  
+
   for (j = 0; j < hpi->nfields; j++) {
     IRRef ref = getHeapInfoField(F, hpi, j);
     IRIns *ins2 = IR(ref);
@@ -657,7 +657,7 @@ static void emit_ir_rename(ASMState *as, Reg down, IRRef ref, SnapNo snapno) {
  *
  *     ... = x
  *     ...
- *     	;; allocation = {x : r2}
+ *      ;; allocation = {x : r2}
  *     --- as->curins --
  *     r1  = r2
  *     ... = r1
@@ -698,13 +698,13 @@ static void ra_rename(ASMState *as, Reg down, Reg up)
  *
  * With the allocation like:
  *     { x1 : r1,  y1 : r2
- *     	 y0 : r1,  x0 : r2 }
+ *       y0 : r1,  x0 : r2 }
  *
  * To break the cycle we choose one of the blockers and rename it to a free
  * register.
  */
 static void asm_phi_break(ASMState *as, RegSet blocked, RegSet blockedby,
-			  RegSet allow)
+                          RegSet allow)
 {
   RegSet candidates = blocked & allow;
   if (candidates) {  /* If this register file has candidates. */
@@ -752,10 +752,10 @@ static void asm_phi_break(ASMState *as, RegSet blocked, RegSet blockedby,
  *
  *      r1  = ... (initialze x0)
  *      LOOP:
- *      	r2  = r1
+ *              r2  = r1
  *      ;; body
- *      	r1  = r2 + 1
- *      	... = r2
+ *              r1  = r2 + 1
+ *              ... = r2
  *      goto LOOP
  *
  * The action taken for a register mismatch depends on the state of the
@@ -787,23 +787,23 @@ static void asm_phi_shuffle(ASMState *as){
       IRIns *irl = IR(as->phireg[r]);
       Reg left = irl->r;
       if (r != left) {  /* Mismatch? */
-	if (!rset_test(as->freeset, r)) {  /* PHI register blocked? */
-	  IRRef ref = regcost_ref(as->cost[r]);
-	  /* Blocked by other PHI (w/reg)? */
-	  if (!irref_islit(ref) && irt_getmark(IR(ref)->t)) {
-	    rset_set(blocked, r);
-	    if (ra_hasreg(left))
-	      rset_set(blockedby, left);
-	    left = RID_NONE;
-	  } else {  /* Otherwise grab register from invariant. */
-	    ra_restore(as, ref);
-	    checkmclim(as);
-	  }
-	}
-	if (ra_hasreg(left)) {
-	  ra_rename(as, left, r);
-	  checkmclim(as);
-	}
+        if (!rset_test(as->freeset, r)) {  /* PHI register blocked? */
+          IRRef ref = regcost_ref(as->cost[r]);
+          /* Blocked by other PHI (w/reg)? */
+          if (!irref_islit(ref) && irt_getmark(IR(ref)->t)) {
+            rset_set(blocked, r);
+            if (ra_hasreg(left))
+              rset_set(blockedby, left);
+            left = RID_NONE;
+          } else {  /* Otherwise grab register from invariant. */
+            ra_restore(as, ref);
+            checkmclim(as);
+          }
+        }
+        if (ra_hasreg(left)) {
+          ra_rename(as, left, r);
+          checkmclim(as);
+        }
       }
       rset_clear(phiset, r);
     }
@@ -1067,7 +1067,7 @@ asm_save(ASMState *as, IRIns *ir) {
   /* Increment the base pointer. */
   RA_DBGX((as, "<<base += $x words>>", (baseslot - 1)));
   emit_gri(as, XG_ARITHi(XOg_ADD), RID_BASE|REX_64,
-	   (baseslot - 1) * sizeof(Word));
+           (baseslot - 1) * sizeof(Word));
 
   for (i = 0; i < snap->nent; i++, entry++) {
     int slot = (int)snap_slot(*entry);
@@ -1116,7 +1116,7 @@ TODO: Better code would be:
   Hp += bytes;
   if (Hp > HpLim) goto stub1;
  cont:
-  
+
 
 stub1:
   Hp -= bytes;
@@ -1135,7 +1135,7 @@ static void asm_heapcheck(ASMState *as, IRIns *ir)
   int32_t bytes = sizeof(Word) * ir->u; /* check for integer
                                            overflow? */
   asm_guardcc(as, CC_A);
-  
+
   // HpLim == [rsp + HPLIM_SP_OFFS]
   emit_rmro(as, XO_CMP, RID_HP|REX_64, RID_ESP|REX_64, HPLIM_SP_OFFS);
 
@@ -1150,7 +1150,7 @@ static void asm_heapcheck(ASMState *as, IRIns *ir)
 static void asm_new(ASMState *as, IRIns *ir) {
   if (ir_issunken(ir))
     return;                     /* Nothing to do */
-  
+
   RA_DBGX((as, "<<NEW $f>>", ir->op1));
   Fragment *F  = as->T;
   HeapInfo *hp = getHeapInfo(F, ir);
@@ -1164,7 +1164,7 @@ static void asm_new(ASMState *as, IRIns *ir) {
 
   /* Finally, put address of initialised object into [dest] */
   emit_rmro(as, XO_LEA, dest|REX_64, RID_HP|REX_64, offs_lo);
-  
+
   /* Next, initialise all fields */
   for (j = hp->nfields - 1;
        j >= 0 && offs >= offs_lo;
@@ -1453,7 +1453,7 @@ void genAsm(JitState *J, Fragment *T) {
   RA_DBG_FLUSH();
 }
 
-#define RIDNAME(name)	#name,
+#define RIDNAME(name)   #name,
 const char *const ra_regname[] = {
   GPRDEF(RIDNAME)
   FPRDEF(RIDNAME)

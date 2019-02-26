@@ -54,11 +54,11 @@ instance  Num Int  where
     (*)    = timesInt
     abs n  = if n `geInt` 0 then n else negateInt n
 
-    signum n = 
+    signum n =
       if n `ltInt` 0 then negateInt 1 else
         if n `eqInt` 0 then 0 else 1
 
-    {-# INLINE fromInteger #-}	 -- Just to be sure!
+    {-# INLINE fromInteger #-}   -- Just to be sure!
     fromInteger i = I# (integerToInt i)
 
 instance Num Word where

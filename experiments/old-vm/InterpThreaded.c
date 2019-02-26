@@ -216,7 +216,7 @@ engine_impl(Capability *cap, EngineMessage msg)
     /* printFrame(base, T->top); */ } while (0)
 # define DBG_RETURN(info, pc) \
   DBG_IND(fprintf(stderr, "Returning to: %s (%p), PC = %p\n",    \
-		 (info)->name, (info), (pc)); \
+                 (info)->name, (info), (pc)); \
           printInfoTable(stderr, (InfoTable*)(info)))
 # define DBG_STACK \
   do { printStack(stderr, base, T->stack); } while (0)
@@ -555,7 +555,7 @@ engine_impl(Capability *cap, EngineMessage msg)
     }
 
     enterCompiledCode(cap, J, T, frag_id);
-    
+
 
     pc = T->pc;
     base = T->base;
@@ -590,7 +590,7 @@ engine_impl(Capability *cap, EngineMessage msg)
      a register window style calling convention).
   */
   DISPATCH_NEXT;
-    
+
  op_IFUNC:
   // ignore
   DISPATCH_NEXT;
@@ -779,7 +779,7 @@ engine_impl(Capability *cap, EngineMessage msg)
       base = top + STACK_FRAME_SIZEW + UPDATE_FRAME_SIZEW;
       T->top = base + framesize;
       code = &info->code;
-      
+
       BRANCH_TO(info->code.code, BRANCH_CALL);
     }
 
@@ -811,7 +811,7 @@ engine_impl(Capability *cap, EngineMessage msg)
     }
 
     DISPATCH_NEXT;
-    
+
     /* T->last_result = (Word)newnode; */
     /* goto do_return; */
   }
@@ -833,13 +833,13 @@ engine_impl(Capability *cap, EngineMessage msg)
     if (incrementHotCounter(cap, J, pc - 1)) {
       /* What a RETURN trace looks like:
 
-	 - First thing is a guard for the return address.  This allows
+         - First thing is a guard for the return address.  This allows
            for a quick exit if we're in a different context.
 
          - If the return address guard fails we fall back to the
-  	   interpreter to execute the RET1 address.  But we've overwritten
+           interpreter to execute the RET1 address.  But we've overwritten
            the RET1 with a JFUNC!  Therefore this case is handled in the
-	   trace exit handler.
+           trace exit handler.
 
          - Therefore: a set J->last_result + move result is atomic
            w.r.t. the trace -- we don't need to synchronise it with
@@ -903,13 +903,13 @@ engine_impl(Capability *cap, EngineMessage msg)
 
     case PAP:
       {
-	pap = (PapClosure*)fnode;
-	fnode = pap->fun;
-	LC_ASSERT(getInfo(fnode)->type == FUN);
-	info = getFInfo(fnode);
-	nargs += pap->nargs;
+        pap = (PapClosure*)fnode;
+        fnode = pap->fun;
+        LC_ASSERT(getInfo(fnode)->type == FUN);
+        info = getFInfo(fnode);
+        nargs += pap->nargs;
 
-	DBG_IND(fprintf(stderr, "calling a PAP%d (%s)\n", pap->nargs, info->name));
+        DBG_IND(fprintf(stderr, "calling a PAP%d (%s)\n", pap->nargs, info->name));
       }
       break;
     case FUN:
@@ -931,7 +931,7 @@ engine_impl(Capability *cap, EngineMessage msg)
         Closure *ap_closure;
         getApContClosure(&ap_closure, &ap_return_pc, callargs, pointer_mask);
         //getAPKClosure(&ap_closure, &ap_return_pc, callargs);
-        
+
         u4 framesize = info->code.framesize;
         DBG_ENTER(info);
         DBG_STACK;
@@ -940,7 +940,7 @@ engine_impl(Capability *cap, EngineMessage msg)
                           framesize)) {
           return INTERP_STACK_OVERFLOW;
         }
-        
+
         base[-1] = (Word)ap_closure;
         top[0] = (Word)base;
         top[1] = (Word)ap_return_pc;
@@ -971,12 +971,12 @@ engine_impl(Capability *cap, EngineMessage msg)
     if (nargs < info->code.arity) { // Partial application
       PapClosure *new_pap = tryAllocClosure(wordsof(PapClosure) + nargs);
       if (new_pap == NULL) {
-	/* Potentially causes GC and thereby moving of objects, the
-	   simplest way to handle this is to just rerun the full
-	   instruction.  This, of course, is only safe if we haven't
-	   performed any observable side effects, yet. */
-	currentBlockFullInterpSync(T, NULL, base);
-	goto op_CALLT_retry;
+        /* Potentially causes GC and thereby moving of objects, the
+           simplest way to handle this is to just rerun the full
+           instruction.  This, of course, is only safe if we haven't
+           performed any observable side effects, yet. */
+        currentBlockFullInterpSync(T, NULL, base);
+        goto op_CALLT_retry;
       }
       setInfo(new_pap, (InfoTable*)&stg_PAP_info);
       new_pap->arity = info->code.arity - nargs;
@@ -984,12 +984,12 @@ engine_impl(Capability *cap, EngineMessage msg)
       new_pap->fun = fnode;
 
       DBG_IND(fprintf(stderr, "Creating PAP = %s, nargs = %d, arity = %d\n",
-		     info->name, new_pap->nargs, new_pap->arity));
+                     info->name, new_pap->nargs, new_pap->arity));
 
 
       if (pap != NULL) { // Some arguments come from an existing PAP
-	for (i = 0; i < pap->nargs; i++)
-	  new_pap->payload[i] = pap->payload[i];
+        for (i = 0; i < pap->nargs; i++)
+          new_pap->payload[i] = pap->payload[i];
       }
 
       int papargs = pap != NULL ? pap->nargs : 0;
@@ -1004,8 +1004,8 @@ engine_impl(Capability *cap, EngineMessage msg)
       pc = (BCIns*)base[-2];
       base = (Word*)base[-3];
       { FuncInfoTable *info = getFInfo((Closure*)base[-1]);
-	DBG_RETURN(info, pc);
-	code = &info->code;
+        DBG_RETURN(info, pc);
+        code = &info->code;
       }
       DISPATCH_NEXT;
     }
@@ -1020,14 +1020,14 @@ engine_impl(Capability *cap, EngineMessage msg)
       pointer_mask >>= callargs - extra_args;
 
       DBG_IND(fprintf(stderr, " ... overapplication: %d + %d\n",
-		     immediate_args, extra_args));
+                     immediate_args, extra_args));
 
       // 1. Calculate where new frame must start.
       top = base + extra_args + 1;
 
       u4 framesize = info->code.framesize;
       if (stackOverflow(T, top, STACK_FRAME_SIZEW + framesize)) {
-	return INTERP_STACK_OVERFLOW;
+        return INTERP_STACK_OVERFLOW;
       }
 
       u4 pap_args = pap ? pap->nargs : 0;
@@ -1045,13 +1045,13 @@ engine_impl(Capability *cap, EngineMessage msg)
       // -+----+----+-   -+----+----+------   -+----
       //
       if (top + pap_args + STACK_FRAME_SIZEW >= base + callargs) {
-	// No overlap.  Copy immediate arguments up
-	for (i = 0; i < immediate_args; i++)
-	  top[STACK_FRAME_SIZEW + pap_args + i] = base[i];
+        // No overlap.  Copy immediate arguments up
+        for (i = 0; i < immediate_args; i++)
+          top[STACK_FRAME_SIZEW + pap_args + i] = base[i];
 
-	// Copy down extra arguments
-	for (i = 0; i < extra_args; i++)
-	  base[i] = base[i + immediate_args];
+        // Copy down extra arguments
+        for (i = 0; i < extra_args; i++)
+          base[i] = base[i + immediate_args];
 
       } else if (immediate_args < extra_args) {
 
@@ -1120,15 +1120,15 @@ engine_impl(Capability *cap, EngineMessage msg)
       T->top = base + newframesize;
 
       if (!pap) {
-	// Arguments already in place.
+        // Arguments already in place.
       } else {
         int i;
-	// Copy up arguments (stack check already done above)
-	for (i = callargs - 1; i >= 0; i --)
-	  base[pap->nargs + i] = base[i];
-	// Fill in arguments from PAP
-	for (i = 0; i < pap->nargs; i++)
-	  base[i] = pap->payload[i];
+        // Copy up arguments (stack check already done above)
+        for (i = callargs - 1; i >= 0; i --)
+          base[pap->nargs + i] = base[i];
+        // Fill in arguments from PAP
+        for (i = 0; i < pap->nargs; i++)
+          base[i] = pap->payload[i];
       }
 
       base[-1] = (Word)fnode;
@@ -1188,13 +1188,13 @@ engine_impl(Capability *cap, EngineMessage msg)
       // 2. Put EVAL and UPDATE frames on top.
       {
         ThunkInfoTable *info = (ThunkInfoTable*)getInfo(fnode);
-	u4 framesize = info->code.framesize;;
+        u4 framesize = info->code.framesize;;
         BCIns *ap_return_pc;
         Closure *ap_closure;
-	int i;
-	u1 *args = (u1*)pc;
+        int i;
+        u1 *args = (u1*)pc;
 
-	DBG_IND("Calling a thunk");
+        DBG_IND("Calling a thunk");
 
         recordEvent(EV_EVAL_THUNK, 0);
         DBG_ENTER(info);
@@ -1202,29 +1202,29 @@ engine_impl(Capability *cap, EngineMessage msg)
 
         getApContClosure(&ap_closure, &ap_return_pc, callargs, pointer_mask);
 
-	// Build APK frame
-	top[0] = (Word)base;
-	top[1] = (Word)(pc + BC_ROUND(nargs) + 1);
-	top[2] = (Word)ap_closure;
-	for (i = 0; i < nargs; i++, args++)
-	  top[3 + i] = base[*args];
+        // Build APK frame
+        top[0] = (Word)base;
+        top[1] = (Word)(pc + BC_ROUND(nargs) + 1);
+        top[2] = (Word)ap_closure;
+        for (i = 0; i < nargs; i++, args++)
+          top[3 + i] = base[*args];
         // framesize of an ap closure is nargs + 1
-	nargs += 1;
+        nargs += 1;
 
-	// Put UPDATE and EVAL frames on top
-	top[3 + nargs + 0] = (Word)&top[3];
-	top[3 + nargs + 1] = (Word)ap_return_pc;
-	top[3 + nargs + 2] = (Word)stg_UPD_closure_addr;
-	top[3 + nargs + 3] = (Word)fnode; // reg0
-	top[3 + nargs + 4] = 0;           // reg1
-	top[3 + nargs + 5] = (Word)&top[3 + nargs + 3];
-	top[3 + nargs + 6] = (Word)stg_UPD_return_pc;
-	top[3 + nargs + 7] = (Word)fnode;
+        // Put UPDATE and EVAL frames on top
+        top[3 + nargs + 0] = (Word)&top[3];
+        top[3 + nargs + 1] = (Word)ap_return_pc;
+        top[3 + nargs + 2] = (Word)stg_UPD_closure_addr;
+        top[3 + nargs + 3] = (Word)fnode; // reg0
+        top[3 + nargs + 4] = 0;           // reg1
+        top[3 + nargs + 5] = (Word)&top[3 + nargs + 3];
+        top[3 + nargs + 6] = (Word)stg_UPD_return_pc;
+        top[3 + nargs + 7] = (Word)fnode;
 
-	base = &top[3 + nargs + 8];
-	T->top = base + framesize;
-	code = &info->code;
-        
+        base = &top[3 + nargs + 8];
+        T->top = base + framesize;
+        code = &info->code;
+
         BRANCH_TO(info->code.code, BRANCH_CALL);
       }
     default:
@@ -1243,9 +1243,9 @@ engine_impl(Capability *cap, EngineMessage msg)
 
       PapClosure *new_pap = tryAllocClosure(wordsof(PapClosure) + nargs);
       if (new_pap == NULL) {
-	/* See note at CALLT. */
-	currentBlockFullInterpSync(T, pc + BC_ROUND(nargs) + 1, base);
-	goto op_CALL_retry;
+        /* See note at CALLT. */
+        currentBlockFullInterpSync(T, pc + BC_ROUND(nargs) + 1, base);
+        goto op_CALL_retry;
       }
 
       setInfo(new_pap, (InfoTable*)&stg_PAP_info);
@@ -1254,7 +1254,7 @@ engine_impl(Capability *cap, EngineMessage msg)
       new_pap->fun   = fnode;
 
       DBG_IND(fprintf(stderr, "Creating PAP = %s, nargs = %d, arity = %d\n",
-		     info->name, pap->nargs, new_pap->arity));
+                     info->name, pap->nargs, new_pap->arity));
 
       if (pap != NULL) {
         // Copy first few args from old PAP
@@ -1275,8 +1275,8 @@ engine_impl(Capability *cap, EngineMessage msg)
       pc     = (BCIns*)base[-2];
       base   = (Word*)base[-3];
       { FuncInfoTable *info = getFInfo((Closure*)base[-1]);
-	DBG_RETURN(info, pc);
-	code = &info->code;
+        DBG_RETURN(info, pc);
+        code = &info->code;
       }
       DISPATCH_NEXT;
     }
@@ -1303,12 +1303,12 @@ engine_impl(Capability *cap, EngineMessage msg)
       pointer_mask >>= callargs - extra_args;  // now matches extra_args
 
       DBG_IND(fprintf(stderr, " ... overapplication: %d + %d\n",
-		     immediate_args, extra_args));
+                     immediate_args, extra_args));
       DBG_ENTER(info);
 
       u4 ap_frame_size = STACK_FRAME_SIZEW + extra_args + 1;
       if (stackOverflow(T, top, STACK_FRAME_SIZEW + framesize + ap_frame_size)) {
-	return INTERP_STACK_OVERFLOW;
+        return INTERP_STACK_OVERFLOW;
       }
 
       top[0] = (Word)base;
@@ -1335,7 +1335,7 @@ engine_impl(Capability *cap, EngineMessage msg)
 
       // Exact application.
       if (stackOverflow(T, top, STACK_FRAME_SIZEW + framesize)) {
-	return INTERP_STACK_OVERFLOW;
+        return INTERP_STACK_OVERFLOW;
       }
       saved_base = base;
     }

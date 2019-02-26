@@ -127,14 +127,14 @@ explicit via case expressions.
 The following grammar describes the output of CorePrep:
 
 @
-Trivial expressions 
+Trivial expressions
    triv ::= lit |  var  | triv ty  |  /\a. triv  |  triv |> co
 
 Applications
    app ::= lit  |  var  |  app triv  |  app ty  |  app |> co
 
 Expressions
-   body ::= app  
+   body ::= app
           | let(rec) x = rhs in body     -- Boxed only
           | case body of pat -> body
           | /\a. body
@@ -172,7 +172,7 @@ bcBind f rhs = do
 type BCOs = M.Map Id (BytecodeObject BcVar BcConst)
 
 bcBindTopLvl :: [CoreBind] -> Trans BCOs
-bcBindTopLvl binds0 = go binds0 M.empty 
+bcBindTopLvl binds0 = go binds0 M.empty
  where
    go (NonRec f rhs : binds) acc = do
      is <- bcBind f rhs
@@ -256,8 +256,8 @@ loadVar :: CoreBndr -> Trans ([InstrA], BcVar, Bool)
 loadVar var = do
   loc <- Ghc.lookupVarEnv <$> gets tsNameMap <*> pure var
   case loc of
-    Nothing 
-      | Ghc.DataConWorkId _ <- Ghc.idDetails var 
+    Nothing
+      | Ghc.DataConWorkId _ <- Ghc.idDetails var
       -> do
         let g = dataConId var
         x <- BcVar <$> freshVar "con"
@@ -282,7 +282,7 @@ loadVar var = do
       recordLocation var (InVar x)
       return ([LoadG x g], x, True)  -- FIXME: not if CAF
 
---bcGenRhs :: CoreExpr -> 
+--bcGenRhs :: CoreExpr ->
 bcGenApp :: CoreBndr -> [CoreArg] -> Trans ([InstrA], BcVar)
 bcGenApp f [] = bcGenExpr (Ghc.Var f)
 bcGenApp f args@[a1,a2]  -- binary primop
@@ -293,7 +293,7 @@ bcGenApp f args@[a1,a2]  -- binary primop
     return (is ++ [BinR op ty r r1 r2], r)
 bcGenApp f args -- other primop
   | Ghc.PrimOpId p <- Ghc.idDetails f = error "Unsupported primop"
-bcGenApp f args 
+bcGenApp f args
   | isGhcConWorkId f = emitStore f args
 bcGenApp f args = do
   (fis, freg) <- bcGenExpr (Ghc.Var f)
@@ -329,7 +329,7 @@ bcGenRhs (viewGhcLam -> (params, body)) = do
   (is, r) <- bcGenExpr body
   return (1, [], is, r)
 
-bcGenCases :: 
+bcGenCases ::
      BcVar -- ^ The thing we're matching on.
   -> BcVar -- ^ Each case alternative should write its result into
            -- this variable.
@@ -349,7 +349,7 @@ withMatchEnv obj (DataAlt _) vars m =
 
 recordLocation :: Ghc.Id -> ValueLocation -> Trans ()
 recordLocation var loc =
-  modify' $ \st -> 
+  modify' $ \st ->
     st{ tsNameMap = Ghc.extendVarEnv (tsNameMap st) var loc }
 
 withLocs :: [(Ghc.Id, ValueLocation)] -> Trans a -> Trans a
@@ -412,7 +412,7 @@ evalWhnf (Ghc.Var x) RetCtx = do
   ifM (isKnownWhnf x')
     (do mumble (fresh $ \v -> emit (LoadG v x'))
   if known_whnf then
-    
+
   if isDataConId x' || isTopLevelId x' then do
     v <- freshVar "gbl"
     emit $ LoadG v x'
@@ -450,7 +450,7 @@ buildThunk (Ghc.Lit l) = do
   loadLiteral l v
   return v
 buildThunk e@(Ghc.App _ _) = do
-  
+
 
 -- | Load literal into specified variable.
 loadLiteral :: Ghc.Literal -> BcVar -> Trans ()

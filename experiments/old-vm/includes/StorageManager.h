@@ -46,12 +46,12 @@ typedef struct _RegionInfo {
 
 /* Memory manager state */
 typedef struct _StorageManagerState {
-  BlockDescr *empty;		/* Linked list of empty blocks */
-  BlockDescr *full;		/* Linked list of full blocks */
-  BlockDescr *current;     	/* Pointer to current closure
-				   allocation block */
-  BlockDescr *infoTables;	/* Linked list of info table blocks */
-  BlockDescr *staticClosures;	/* Linked list of static closures */
+  BlockDescr *empty;            /* Linked list of empty blocks */
+  BlockDescr *full;             /* Linked list of full blocks */
+  BlockDescr *current;          /* Pointer to current closure
+                                   allocation block */
+  BlockDescr *infoTables;       /* Linked list of info table blocks */
+  BlockDescr *staticClosures;   /* Linked list of static closures */
   BlockDescr *scav_todo;
 
   /* State concerning the dynamic region of the heap. */

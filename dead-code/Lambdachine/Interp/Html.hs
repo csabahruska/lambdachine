@@ -1,9 +1,9 @@
 -- | Generate (X)HTML as debug output.
-module Lambdachine.Interp.Html 
+module Lambdachine.Interp.Html
   ( module Lambdachine.Interp.Html
   , H.HTML(..)
   , H.showHtml, H.renderHtml, H.prettyHtml
-  ) 
+  )
 where
 
 import Lambdachine.Interp.Types
@@ -17,7 +17,7 @@ import Data.Monoid
 
 defaultWrapper :: Html -> Html
 defaultWrapper h =
-  H.header << H.style << default_style 
+  H.header << H.style << default_style
     +++
   H.body << h
  where
@@ -30,7 +30,7 @@ defaultWrapper h =
 --infixl 6 <>
 
 --traceToHtml :: RecordState -> IO H.Html
---traceToHtml 
+--traceToHtml
 
 -- class ToHtml a where
 --   toHtml :: a -> H.Html
@@ -58,5 +58,4 @@ instance HTML IRIns where
     FLoad r o -> insName "ld_field" +++ ' ' +++ r +++ ", " +++ o
     LoadBase n -> insName "ld_base" +++ ' ' +++ n
     SetBase n -> insName "set_base" +++ ' ' +++ n
-    
-    
+

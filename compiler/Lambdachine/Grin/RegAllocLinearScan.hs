@@ -1,5 +1,5 @@
 {-# LANGUAGE BangPatterns, GADTs, GeneralizedNewtypeDeriving  #-}
-module Lambdachine.Grin.RegAllocLinearScan 
+module Lambdachine.Grin.RegAllocLinearScan
   ( allocRegs )
 where
 
@@ -99,7 +99,7 @@ fixJumpTargets env code0 =
    -- maps label to offset into code0
    labelToCode0Index :: M.Map Label Int
    labelToCode0Index = Vec.ifoldl' add_label M.empty code0
-     where 
+     where
        add_label :: M.Map Label Int -> Int -> LinearIns -> M.Map Label Int
        add_label lbls idx (Fst (Label l)) = M.insert l idx lbls
        add_label lbls _   _               = lbls
@@ -117,7 +117,7 @@ fixJumpTargets env code0 =
      = dest_label /= next_label  -- only keep if jump is not to next instruction
      | otherwise
      = True
-   
+
    keep_code :: Vector Bool
    keep_code = Vec.imap keep code0
 
@@ -127,17 +127,17 @@ fixJumpTargets env code0 =
 
    labelToCode1Index = M.map (\old_idx -> new_idx Vec.! old_idx) labelToCode0Index
 
-   lookupLabelCode1 l = 
+   lookupLabelCode1 l =
      case M.lookup l labelToCode1Index of
        Just i -> i
        Nothing -> error $ "fixJumpTargets: label missing: " ++ pretty env l
-   
+
    updateLabel (Fst ins) = Fst (mapLabels lookupLabelCode1 ins)
    updateLabel (Mid ins) = Mid (mapLabels lookupLabelCode1 ins)
    updateLabel (Lst ins) = Lst (mapLabels lookupLabelCode1 ins)
 
    code1 = Vec.map updateLabel (Vec.ifilter (\idx _ -> keep_code Vec.! idx) code0)
-                            
+
 
 lineariseGraph :: GlobalEnv -> FactBase LiveVars -> Graph BcIns O C
                -> (LiveIns, [(LinearIns, LiveOuts)])
@@ -146,7 +146,7 @@ lineariseGraph env livenessInfo graph@(GMany (JustO entry) body NothingO) =
  where
    body_blocks = postorder_dfs graph  -- excludes entry sequence
    !linear_code =
-        Vec.fromList $ 
+        Vec.fromList $
           concat (lineariseBlock env livenessInfo entry :
                   map (lineariseBlock env livenessInfo) body_blocks)
    !live_outs = liveOuts env livenessInfo linear_code
@@ -154,7 +154,7 @@ lineariseGraph env livenessInfo graph@(GMany (JustO entry) body NothingO) =
 
    entry_live_ins
      | Vec.length linear_code == 0 = S.empty
-     | otherwise = 
+     | otherwise =
         nonVoid env (liveIns livenessInfo (Vec.head linear_code)
                              (Vec.head live_outs))
 
@@ -165,7 +165,7 @@ liveIns global_live_outs ins0 live_out =
     Mid ins -> live ins live_out
     Fst ins -> live ins live_out
 
-annotateAllocationsWithLiveIns :: GlobalEnv -> 
+annotateAllocationsWithLiveIns :: GlobalEnv ->
                                   Vector LiveOuts -> Vector LinearIns
                                -> Vector LinearIns
 annotateAllocationsWithLiveIns env lives inss = Vec.imap annotate inss
@@ -228,14 +228,14 @@ newtype FinalReg = R Int
 instance Pretty FinalReg where ppr (R n) = char 'R' <> int n
 
 data AllocState = AS { current :: !RegMapState
-                     , pending :: !(M.Map Label RegMapState)   
+                     , pending :: !(M.Map Label RegMapState)
                      , emitted :: ![LinearIns]
                      , graph :: Graph BcIns O C  -- for error messages only
                      }
 
 -- | The current register assignment.
 --
-data RegMapState = RMS 
+data RegMapState = RMS
   { var2reg :: !(M.Map BcVar FinalReg)
   , reg2var :: !(M.Map FinalReg BcVar)
   , frees :: !(S.Set FinalReg)
@@ -280,8 +280,8 @@ currentAlloc var = M.lookup var . var2reg <$> gets current
 
 setAlloc :: BcVar -> FinalReg -> AllocM ()
 setAlloc var reg =
-  modify' (\as -> 
-             let curr = current as      
+  modify' (\as ->
+             let curr = current as
                  curr' =
                    curr{ var2reg = M.insert var reg (var2reg curr)
                        , reg2var = M.insert reg var (reg2var curr)
@@ -294,7 +294,7 @@ markAsFree reg = do
   case mb_owner of
     Nothing -> return ()  -- reg must be free
     Just owner -> do
-      modify' (\as -> 
+      modify' (\as ->
         let curr = current as
             curr' =
               curr{ var2reg = M.delete owner (var2reg curr)
@@ -333,7 +333,7 @@ rememberState lbl outs = do
 recallState :: Label -> AllocM ()
 recallState lbl = do
   pendings <- gets pending
-  case M.lookup lbl pendings of 
+  case M.lookup lbl pendings of
     Nothing ->
       error $ "Missing state for label: " ++ show lbl
     Just st ->
@@ -434,7 +434,7 @@ varType :: GlobalEnv -> BcVar -> OpTy
 varType _env (BcReg _ t) = t
 varType env  (BcVar _ t) = transType env t
 
---detectDeaths :: LiveOuts -> 
+--detectDeaths :: LiveOuts ->
 
 allocRef1' :: GlobalEnv -> LiveOuts -> BcVar -> AllocM BcVar
 allocRef1' env liveOuts var = do
@@ -488,7 +488,7 @@ allocRegsSingle env (Mid ins) liveOuts = do
     --   xs' <- allocRefs liveOuts xs
     --   dest' <- allocDest' liveOuts dest
     --   lives' <- S.fromList <$> mapM allocRef1 (S.toList lives)
-    --   emit (Mid (Assign dest' (AllocAp xs' lives')))     
+    --   emit (Mid (Assign dest' (AllocAp xs' lives')))
     Assign dest rhs -> do
       ensurePrecolouredDestAvail env dest liveOuts
       rhs' <- descendBiM (allocRef1 env) rhs
@@ -504,7 +504,7 @@ allocRegsSingle env (Mid ins) liveOuts = do
                       <*> allocRef1 env s3 <*> pure n
       pruneDeads env liveOuts [s1, s2, s3]
       emit (Mid ins')
-                               
+
 allocRegsSingle env (Lst ins) liveOuts = do
   case ins of
     Goto l -> do
@@ -572,12 +572,12 @@ liveOuts env liveInsAtLabels inss =
    liveInsAt :: MVec.MVector s LiveOuts -> Int -> ST s LiveIns
    liveInsAt liveouts i
      | i >= Vec.length inss = return S.empty
-     | otherwise 
+     | otherwise
      = do outs <- MVec.read liveouts i
           let !ins = liveInsFromLiveOuts (inss Vec.! i) outs
           -- trace ("\nOUTS=" ++ pretty outs ++ "\n  => " ++ pretty (inss Vec.! i) ++ "\n  => INS=" ++ pretty ins ++ "\n") $ do
           return ins
-   
+
    go :: MVec.MVector s LiveOuts -> Int -> ST s ()
    -- go _ i | trace ("go " ++ show i) False = undefined
    go liveOuts i | i < 0 = return ()
@@ -604,8 +604,8 @@ liveOuts global_live_outs inss =
  where
    calcLives (Mid ins) live_out = live ins live_out
    calcLives (Fst ins) live_out = live ins live_out
-   calcLives (Lst ins) live_out = 
-     S.unions [ 
+   calcLives (Lst ins) live_out =
+     S.unions [
      let ls = labels ins in
     live ins global_live_outs
 -}

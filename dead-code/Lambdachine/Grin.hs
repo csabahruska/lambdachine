@@ -115,10 +115,10 @@ instance Pretty FunDef where
 
 {-
 tst1 =
-  Eval AlwaysUpdate m :>>= (Node cInt [m'] :-> 
-  Eval AlwaysUpdate n :>>= (Node cInt [n'] :-> 
+  Eval AlwaysUpdate m :>>= (Node cInt [m'] :->
+  Eval AlwaysUpdate n :>>= (Node cInt [n'] :->
   Prim intGT [m', n'] :>>= (Var b' :->
-  Case b' 
+  Case b'
     [Var cTrue :> Unit (Node cNil [])
     ,Var cFalse :>
       (Unit (Lit 1) :>>= (Var o' :->
@@ -127,10 +127,10 @@ tst1 =
        Store (Node fupto [p1, n]) :>>= (Var p2 :->
        Unit (Node cCons [m, p2]))))))])))
  where
-   [cInt, cNil, cCons, cTrue, cFalse] = 
+   [cInt, cNil, cCons, cTrue, cFalse] =
      map name ["CI#", "C[]", "C:", "CTrue", "CFalse"]
    [fupto] = map name ["Fupto"]
    [intGT, intAdd] = map name [">#", "+#"]
-   [m, m', n, n', b', o', x', p1, p2] = 
+   [m, m', n, n', b', o', x', p1, p2] =
      map name ["m", "m'", "n", "n'", "b'", "o'", "x'", "p1", "p2"]
 -}

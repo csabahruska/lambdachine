@@ -176,7 +176,7 @@ type Hook a = a -> a
 
 data FileHooks = FileHooks
   { hookParse :: Hook (ModSummary -> HHsc HsParsedModule)
-  , hookTypecheckRename :: Hook (HscEnv -> ModSummary -> HsParsedModule 
+  , hookTypecheckRename :: Hook (HscEnv -> ModSummary -> HsParsedModule
                                         -> HHsc TcGblEnv)
   , hookDesugar :: Hook (HscEnv -> ModSummary -> TcGblEnv -> HHsc ModGuts)
   , hookOptimize :: Hook (ModGuts -> HHsc ModGuts)
@@ -299,7 +299,7 @@ throwErrors = liftIO . throwIO . mkSrcErr
 
 unHsc :: Hsc a -> HscEnv -> IO (Messages, Maybe a)
 unHsc (Hsc m) env = do
-  handleSourceError (\err -> 
+  handleSourceError (\err ->
       return ((emptyBag, srcErrorMessages err), Nothing)) $ do
     (a, warns) <- m env emptyBag
     return ((warns, emptyBag), Just a)
@@ -759,7 +759,7 @@ hscOneShotCompiler hooks = HsCompiler {
         --guts <- hscSimplify' guts0
         (iface, changed, details, cgguts) <- hscNormalIface guts mb_old_iface
         hscWriteIface iface changed mod_summary
-        
+
         env' <- getHscEnv
         mbStub <- ioMsgMaybe $ hookCodeGen hooks
                     (\iface' details' cgguts' mod_summary' -> do
@@ -1069,7 +1069,7 @@ checkSafeImports dflags tcg_env
               (text $ "is imported both as a safe and unsafe import!"))
         | otherwise
         = return v1
-    
+
     -- easier interface to work with
     checkSafe (_, _, False) = return Nothing
     checkSafe (m, l, True ) = fst `fmap` hscCheckSafe' dflags m l
@@ -1096,7 +1096,7 @@ hscGetSafe hsc_env m l = runHsc hsc_env $ do
     let pkgs' | Just p <- self = p:pkgs
               | otherwise      = pkgs
     return (good, pkgs')
- 
+
 -- | Is a module trusted? If not, throw or log errors depending on the type.
 -- Return (regardless of trusted or not) if the trust type requires the modules
 -- own package be trusted and a list of other packages required to be trusted
@@ -1180,7 +1180,7 @@ hscCheckSafe' dflags m l = do
             Just _  -> return iface
             Nothing -> snd `fmap` (liftIO $ getModuleInterface hsc_env m)
         return iface'
-#else 
+#else
         return iface
 #endif
 
@@ -2270,7 +2270,7 @@ checkSafeImports dflags tcg_env
               (text $ "is imported both as a safe and unsafe import!"))
         | otherwise
         = return v1
-    
+
     -- easier interface to work with
     checkSafe (_, _, False) = return Nothing
     checkSafe (m, l, True ) = fst `fmap` hscCheckSafe' dflags m l
@@ -2358,7 +2358,7 @@ hscCheckSafe' dflags m l = do
             Just _  -> return iface
             Nothing -> snd `fmap` (liftIO $ getModuleInterface hsc_env m)
         return iface'
-#else 
+#else
         return iface
 #endif
 

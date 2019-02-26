@@ -15,7 +15,7 @@ data Atom
   = Var Var
   | Lit Literal
   deriving (Eq, Show)
-           
+
 data Obj
   = Fun [Var] [Var] Term -- fvs params body
   | Con DataCon [Atom]
@@ -46,7 +46,7 @@ viewTerm t = t
 instance Pretty Atom where
   ppr (Var v) = ppr v
   ppr (Lit l) = ppr l
-  
+
 instance Pretty PrimOp where
   ppr Add = text "(+)"
   ppr Sub = text "(-)"
@@ -70,7 +70,7 @@ instance Pretty Term where
     keyword "in" </> ppr body
   ppr (Pos n t) =
     int n <> char ':' <> ppr t
-    
+
 instance Pretty Obj where
   ppr (Fun _ params body) =
     text "FUN" <> parens (sep (map ppr params) <+> text "->" </>
@@ -84,11 +84,11 @@ instance Pretty AltCon where
   ppr (DataAlt dcon vs) = text dcon <+> sep (map ppr vs)
   ppr (LitAlt lit) = ppr lit
   ppr DEFAULT = char '_'
-  
+
 ppr_alt :: Alt -> PDoc
 ppr_alt (alt, term) =
   ppr alt <+> text "->" </> hang 2 (ppr term)
-  
+
 ppr_bind :: (Var, Obj) -> PDoc
 ppr_bind (v, obj) =
   hang 2 $ ppr v <+> char '=' </> ppr obj

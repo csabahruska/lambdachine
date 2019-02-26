@@ -14,7 +14,7 @@ import GHC.Num
 
 loop :: Int -> Int
 loop (I# 0#) = (I# 0#)
-loop (I# n#) = 
+loop (I# n#) =
   let !n' = (I# (n# -# 1#)) in
   let !(I# n'') = loop n' in
   I# (n# +# n'')

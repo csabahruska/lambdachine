@@ -421,7 +421,7 @@ printIRBuffer(JitState *J)
     // Don't print boring instructions unless we're debugging.
 #if LC_DEBUG_LEVEL < 2
     if (IR(ref)->o == IR_NOP ||
-	IR(ref)->o == IR_FRAME || IR(ref)->o == IR_RET)
+        IR(ref)->o == IR_FRAME || IR(ref)->o == IR_RET)
       continue;
 #endif
 
@@ -499,7 +499,7 @@ recordBuildEvalFrame(JitState *J, TRef node, ThunkInfoTable *info,
   setSlot(J, t + 6, emitKWord(J, (Word)stg_UPD_return_pc, LIT_PC));
   setSlot(J, t + 7, node);
 
-  u2 mask; 
+  u2 mask;
   // Clear slots that aren't live-out.
   FOR_MASK(liveouts, mask, j, i = 0, i < t, i++) {
     if (!(mask & 1)) setSlot(J, i, 0);
@@ -694,7 +694,7 @@ recordIns(JitState *J)
 
       if (farity == nargs) {
         // Exact application
-        
+
         if (LC_UNLIKELY(J->T->base + info->code.framesize >= J->startbase + MAX_SLOTS)) {
           DBG_PR("ABORT: Frame too deep.");
           goto abort_recording;
@@ -727,9 +727,9 @@ recordIns(JitState *J)
         u4 framesize = info->code.framesize;
         BCIns *ap_return_pc;
         Closure *ap_closure;
-	DBG_LVL(2, "Recording overapplication %d + %d\n",
-		farity, extra_args);
-	IF_DBG_LVL(1, printSlots(J));
+        DBG_LVL(2, "Recording overapplication %d + %d\n",
+                farity, extra_args);
+        IF_DBG_LVL(1, printSlots(J));
 
         getApContClosure(&ap_closure, &ap_return_pc, extra_args,
                          pointer_mask >> (nargs - extra_args));
@@ -765,7 +765,7 @@ recordIns(JitState *J)
           setSlot(J, i, extras[i]);
         setSlot(J, extra_args, 0); // Clear slot, used for result
 
-	IF_DBG_LVL(1, printSlots(J));
+        IF_DBG_LVL(1, printSlots(J));
 
         // Finally, update meta info
         J->baseslot += topslot + 3;
@@ -776,7 +776,7 @@ recordIns(JitState *J)
           setSlot(J, i, 0); // clear other slots
         J->framedepth++;
 
-	IF_DBG_LVL(1, printSlots(J));
+        IF_DBG_LVL(1, printSlots(J));
 
       } else {
         // Partial Application
@@ -870,19 +870,19 @@ recordIns(JitState *J)
       guardEqualRetAddr(J, getSlot(J, -2), return_pc);
 
       /* Clear all slots and the frame of the return target. The
-	 result has been saved in J->last_result and will be loaded
-	 via BC_MOV_RES. */
+         result has been saved in J->last_result and will be loaded
+         via BC_MOV_RES. */
       memset(&J->base[-3], 0, 3 * sizeof(TRef));
 
       if (J->framedepth < 0 && J->cur.traceType != RETURN_TRACE) {
         DBG_PR("ABORT: Returning outside of original frame (B).\n");
         goto abort_recording;
       } else {
-	J->baseslot -= basediff;
+        J->baseslot -= basediff;
       }
 
       if (J->minslot > J->baseslot - 3) {
-	J->minslot = J->baseslot - 3;
+        J->minslot = J->baseslot - 3;
       }
 
       // TODO: Do something with slot(-3)?
@@ -1027,7 +1027,7 @@ recordIns(JitState *J)
 
 /* Default values for JIT parameters. */
 static const int32_t jit_param_default[JIT_P__MAX+1] = {
-#define JIT_PARAMINIT(len, name, value)	(value),
+#define JIT_PARAMINIT(len, name, value) (value),
 JIT_PARAMDEF(JIT_PARAMINIT)
 #undef JIT_PARAMINIT
   0
@@ -1057,7 +1057,7 @@ initJitState(JitState *J, const Opts* opts)
 
 LC_FASTCALL void
 startRecording(JitState *J, BCIns *startpc, Thread *T, Word *base,
-	       TraceType type)
+               TraceType type)
 {
   T->base = base;
   J->startpc = startpc;
@@ -1068,8 +1068,8 @@ startRecording(JitState *J, BCIns *startpc, Thread *T, Word *base,
   if (J->loghandle) {
     FuncInfoTable *info = getFInfo(base[-1]);
     LOG_JIT(J, "Starting trace at%s: %s (pc=%p)\n",
-	    type == RETURN_TRACE ? " return point in" : " ",
-	    info->name, startpc);
+            type == RETURN_TRACE ? " return point in" : " ",
+            info->name, startpc);
   }
   if (type == RETURN_TRACE) {
     DBG_LVL(2, "Starting a return trace");
@@ -1124,12 +1124,12 @@ finishRecording(JitState *J, UnrollLevel unrollLevel)
   if (J->cur.traceType == FUNCTION_TRACE) {
     *J->startpc = BCINS_AD(BC_JFUNC, 0, J->nfragments);
     DBG_PR("Overwriting startpc = %p, with: %x\n",
-	   J->startpc, *J->startpc);
+           J->startpc, *J->startpc);
   } else if (J->cur.traceType == RETURN_TRACE) {
     LC_ASSERT(bc_op(J->cur.orig) == BC_RET1);
     *J->startpc = BCINS_AD(BC_JRET, bc_a(J->cur.orig), J->nfragments);
     DBG_PR("Overwriting startpc = %p, with: %x\n",
-	   J->startpc, *J->startpc);
+           J->startpc, *J->startpc);
   }
 
 /*
@@ -1138,10 +1138,10 @@ finishRecording(JitState *J, UnrollLevel unrollLevel)
     for (ref = J->chain[IR_NEW]; ref >= REF_FIRST; ref = IR(ref)->prev) {
       HeapInfo *hpi = getHeapInfo(&J->cur, IR(ref));
       DBG_LVL(1, "is_sunken = %d, hp_offs = %d\n",
-	      ir_issunken(IR(ref)), hpi->hp_offs);
+              ir_issunken(IR(ref)), hpi->hp_offs);
     }
     sayonara("Not yet implemented -- non-unrollable loops.");
-  } 
+  }
 */
 
 #if LC_HAS_ASM_BACKEND
@@ -1307,7 +1307,7 @@ startRecordingSideTrace(JitState *J, Thread *T, Word *base,
 {
   SnapShot *snap = getSnapshot(parent, exitno);
   BCIns *pc = getSnapshotPC(parent, snap);
-  
+
   startRecording(J, pc, T, base, SIDE_TRACE);
   initSideTraceRecording(J, parent, exitno);
 }

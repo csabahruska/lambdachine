@@ -71,7 +71,7 @@ HAMT_delete_trie(HAMTNode *node)
     unsigned int i, size;
 
     size = countOneBits(node->bitmapOrKey);
-    
+
     for (i = 0; i < size; i++)
       HAMT_delete_trie(&(getSubTrie(node))[i]);
 
@@ -102,12 +102,12 @@ HAMT_insert(HAMT *hamt, const char *key, const char *value)
   hash = hamt->hashKey(key);
   subhash = hamt & 0x1f;
   node = &hamt->root[subhash];
-  
+
   if (node->baseOrValue == 0) {
     // Slot in root table is currently empty.
     node->bitmapOrKey = hash;
     entry = malloc(sizeof(HAMTEntry));
-    entry->next = 0; // TODO: 
+    entry->next = 0; // TODO:
     entry->key = key;
     entry->data = value;
     setValue(node, entry);
@@ -115,7 +115,7 @@ HAMT_insert(HAMT *hamt, const char *key, const char *value)
   }
 
   for (;;) {
-    
+
   }
 }
 

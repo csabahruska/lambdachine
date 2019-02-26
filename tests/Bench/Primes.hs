@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude, BangPatterns, MagicHash, CPP #-}
 -- RUN: %bc_vm_chk
--- CHECK: @Result@ IND -> GHC.Bool.True`con_info 
+-- CHECK: @Result@ IND -> GHC.Bool.True`con_info
 #ifdef BENCH_GHC
 import Prelude ( print )
 #else
@@ -33,7 +33,7 @@ root n = primes !! n
     primes :: [Int]
     primes = map head (iterate the_filter (iterate succ 2))
 
-test = 
+test =
   root 25 == 101
 
 bench =

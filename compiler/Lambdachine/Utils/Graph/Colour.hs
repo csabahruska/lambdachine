@@ -110,20 +110,20 @@ colourGraph env iterative spinCount colours triv spill graph0 =
     if not $ null ksNoTriv
       then
         error $ "colourGraph: trivially colourable nodes didn't colour!" -- empty
-	  ++ pretty env (  empty
-		$$ text "ksTriv    = " <> ppr ksTriv
-		$$ text "ksNoTriv  = " <> ppr ksNoTriv
-		$$ text "colours    = " <> ppr colours
-		$$ empty
+          ++ pretty env (  empty
+                $$ text "ksTriv    = " <> ppr ksTriv
+                $$ text "ksNoTriv  = " <> ppr ksNoTriv
+                $$ text "colours    = " <> ppr colours
+                $$ empty
                 $$ text (dotGraph env graph_triv))
---		$$ dotGraph (\_ -> text "white") triv graph_triv) -- -}
+--              $$ dotGraph (\_ -> text "white") triv graph_triv) -- -}
 
       else
-	( graph_prob
-	, fromListUS ksNoColour -- the nodes that didn't colour (spills)
-	, if iterative
-	    then fromListUM kksCoalesce2
-	    else fromListUM kksCoalesce1)
+        ( graph_prob
+        , fromListUS ksNoColour -- the nodes that didn't colour (spills)
+        , if iterative
+            then fromListUM kksCoalesce2
+            else fromListUM kksCoalesce1)
 
 dotGraph :: forall k cls colour. (Ord k, Pretty k, Pretty cls, Pretty colour) =>
             GlobalEnv -> Graph k cls colour -> String
@@ -138,8 +138,8 @@ dotGraph env g = unlines $ [ "graph G {" ] ++ edges ++ [ "}" ]
    removeDuplicates = Set.toList . Set.fromList
 
    edges = removeDuplicates edges0  -- remove duplicates
-   
-   edges0 = 
+
+   edges0 =
      [ show (pretty env n_id) ++ " -- " ++ show (pretty env c_id)
      | n@Node{ nodeId = n_id0 } <- nodes
      , c_id0 <- elementsUS (nodeConflicts n)
@@ -170,9 +170,9 @@ colourScan ::
       Ord k, Eq cls, Pretty k, Pretty cls, Pretty colour) =>
      GlobalEnv
   -> Bool -- ^ whether to do iterative coalescing
-  -> Triv k cls colour		-- ^ fn to decide whether a node is trivially colourable
-  -> (Graph k cls colour -> k)	-- ^ fn to choose a node to potentially leave uncoloured if nothing is trivially colourable.
-  -> Graph k cls colour		-- ^ the graph to scan
+  -> Triv k cls colour          -- ^ fn to decide whether a node is trivially colourable
+  -> (Graph k cls colour -> k)  -- ^ fn to choose a node to potentially leave uncoloured if nothing is trivially colourable.
+  -> Graph k cls colour         -- ^ the graph to scan
   -> ([k], [k], [(k, k)]) -- ^ triv colourable nodes, problem nodes, pairs of nodes to coalesce
 
 colourScan env iterative triv spill graph =
@@ -192,12 +192,12 @@ colourScan_spin env iterative triv spill graph
   | nsTrivFound@(_:_)
       <- scanGraph graph $ \node ->
            triv (nodeClass node) (nodeConflicts node) (nodeExclusions node)
-	     -- for iterative coalescing we only want non-move related
-	     --	nodes here
-	   && (not iterative || nullUS (nodeCoalesce node))
+             -- for iterative coalescing we only want non-move related
+             -- nodes here
+           && (not iterative || nullUS (nodeCoalesce node))
   , ksTrivFound <- map nodeId nsTrivFound
   , graph2 <- foldr (\k g -> let Just g' = delNode k g in g')
-	            graph ksTrivFound
+                    graph ksTrivFound
   = colourScan_spin env iterative triv spill graph2
                    (ksTrivFound ++ ksTriv)
                    ksSpill
@@ -213,7 +213,7 @@ colourScan_spin env iterative triv spill graph
       -- see if this frees up more nodes to be trivially colourable.
       (graph2, kksCoalesceFound @(_:_)) ->
         colourScan_spin env iterative triv spill graph2
-		       ksTriv ksSpill (reverse kksCoalesceFound ++ kksCoalesce)
+                       ksTriv ksSpill (reverse kksCoalesceFound ++ kksCoalesce)
 
       -- Freeze:
       --
@@ -221,17 +221,17 @@ colourScan_spin env iterative triv spill graph
       -- node to freeze and give up on ever coalescing it.
       (graph2, []) ->
         case freezeOneInGraph graph2 of
-	  -- we were able to freeze something hopefully this will free
-	  -- up something for Simplify
-	  (graph3, True) ->
-	    colourScan_spin env iterative triv spill graph3
-			   ksTriv ksSpill kksCoalesce
+          -- we were able to freeze something hopefully this will free
+          -- up something for Simplify
+          (graph3, True) ->
+            colourScan_spin env iterative triv spill graph3
+                           ksTriv ksSpill kksCoalesce
 
-	  -- we couldn't find something to freeze either
-	  --	time for a spill
-	  (graph3, False) ->
-	    colourScan_spill env iterative triv spill graph3
-			    ksTriv ksSpill kksCoalesce
+          -- we couldn't find something to freeze either
+          --    time for a spill
+          (graph3, False) ->
+            colourScan_spill env iterative triv spill graph3
+                            ksTriv ksSpill kksCoalesce
 
   -- spill time
   | otherwise
@@ -272,10 +272,10 @@ assignColours env colours graph ks =
 
    assignColours' colours graph prob (k:ks) =
      case assignColour colours k graph of
-   	-- couldn't colour this node
-    	Nothing     -> assignColours' colours graph (k : prob) ks
-   	-- this node coloured ok, so do the rest
-   	Just graph' -> assignColours' colours graph' prob ks
+        -- couldn't colour this node
+        Nothing     -> assignColours' colours graph (k : prob) ks
+        -- this node coloured ok, so do the rest
+        Just graph' -> assignColours' colours graph' prob ks
 
    assignColour colours u graph
      | Just c <- selectColour env colours graph u
@@ -308,9 +308,9 @@ selectColour env colours graph u =
     -- lookup the available colours for the class of this node.
     colours_avail =
       case lookupUM (nodeClass node) colours of
-        Nothing	-> error $ "selectColour: no colours available for class "
+        Nothing -> error $ "selectColour: no colours available for class "
                             ++ (pretty env $! nodeClass node)
-        Just cs	-> cs
+        Just cs -> cs
 
     -- Find colours we can't use because they're already being used by
     -- a node that conflicts with this one.
@@ -327,7 +327,7 @@ selectColour env colours graph u =
 
     -- colours that are still valid for us
     colours_ok_ex = colours_avail `differenceUS` nodeExclusions node
-    colours_ok	= colours_ok_ex `differenceUS` colours_conflict
+    colours_ok  = colours_ok_ex `differenceUS` colours_conflict
 
     -- the colours that we prefer, and are still ok
     colours_ok_pref =
@@ -346,7 +346,7 @@ selectColour env colours graph u =
       -- everyone is happy, yay!
       | not $ nullUS colours_ok_pref_nice
       , c : _ <- filter (`memberUS` colours_ok_pref_nice)
-    		        (nodePreference node)
+                        (nodePreference node)
       = Just c
 
       -- we've got one of our preferences

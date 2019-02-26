@@ -17,7 +17,7 @@ The function `irEngine` implements an interpreter for the trace IR.
 While this is obviously very slow, it can be useful to collect
 execution statistics and to serve as a reference semantics for the
 generated machine code.
-  
+
 *********************************************************************/
 
 typedef void* Inst;
@@ -26,7 +26,7 @@ typedef void* Inst;
 
 int
 restoreStack(Fragment *F, Word *base, Word *vals, Word *hp, Word *hplim,
-	     IRRef pcref, Thread *T);
+             IRRef pcref, Thread *T);
 Word restoreValue(Fragment *F, Word *vals, IRRef ref);
 
 #ifdef LC_SELF_CHECK_MODE
@@ -71,7 +71,7 @@ runInterpreter(Capability *cap, BCIns *pcto)
   LC_ASSERT(J->mode == JIT_MODE_NORMAL);
   J->mode = JIT_MODE_VERIFY;
 
-  /* Run interpreter in single-stepping mode until we reach the desired PC. 
+  /* Run interpreter in single-stepping mode until we reach the desired PC.
      Note that the starting PC might be the same as the finishing PC, so we
      check for a repeating PC only after executing the first instruction.
   */
@@ -95,7 +95,7 @@ runInterpreter(Capability *cap, BCIns *pcto)
 
   cap->flags &= ~CF_SINGLE_STEP;
   J->mode = JIT_MODE_NORMAL;
-  
+
   /* //BCIns *old_pc = cap->T->pc; */
   /* BCIns saved_stop_ins = *pcto; */
   /* *pcto = BCINS_AD(BC_STOP, 0, 0); */
@@ -122,7 +122,7 @@ irEngine(Capability *cap, Fragment *F)
     &&stop
   };
 
-  
+
   IRRef ref;
   Thread *T = cap->T;
   Word nphis = F->nphis;
@@ -325,15 +325,15 @@ irEngine(Capability *cap, Fragment *F)
     if (M->nfull < M->nextgc) {
       /* We just reached the end of the current block, no full GC
          necessary, yet.  Just grab a new block and re-enter trace.
-         
+
          This is safe even in compiled code provided that:
-         
+
            - the heap pointer is a dedicated register (or stack slot)
 
            - the heap limit is in a dedicated register or stack slot
              (more likely the latter)
       */
-      
+
       makeCurrent(M, getEmptyBlock(M));
       hp = M->hp;
       hplim = M->limit;
@@ -343,7 +343,7 @@ irEngine(Capability *cap, Fragment *F)
          each but the last iteration we increment M->nfull */
 
     }
-#endif      
+#endif
     /* GC necessary.  It's easiest to just force execution back to
        the interpreter.  Eventually, the interpreter will try to
        allocate an object, fail the heap check, and trigger a
@@ -358,14 +358,14 @@ irEngine(Capability *cap, Fragment *F)
        instruction executed by the interpreter.
 
        There is one degenerate case here.  Consider these events:
-       
+
          1. We exit a trace
 
          2. The interpreter continues execution but doesn't perform
             any allocations.
 
-         3. The interpreter finds another trace entrance 
-       
+         3. The interpreter finds another trace entrance
+
     */
     makeCurrent(M, getEmptyBlock(M));
     heapcheck_failed = 1;
@@ -388,8 +388,8 @@ irEngine(Capability *cap, Fragment *F)
     SET_INFO(cl, (InfoTable*)vals[pc->op1]);
     for (j = 0; j < hpi->nfields; j++) {
       DBG_LVL(3, "    field %d: %d, %" FMT_WordX "\n", j,
-	      irref_int(getHeapInfoField(F, hpi, j)),
-	      vals[getHeapInfoField(F, hpi, j)]);
+              irref_int(getHeapInfoField(F, hpi, j)),
+              vals[getHeapInfoField(F, hpi, j)]);
       WRITE_HEAP(&cl->payload[j], vals[getHeapInfoField(F, hpi, j)]);
     }
     /* DBG_LVL(3, "Hp = %p size=%d offs=%d Clos=%p\n", */
@@ -439,10 +439,10 @@ irEngine(Capability *cap, Fragment *F)
       int reg = (int)snap_slot(*p) - 1;
       IRRef ref = snap_ref(*p);
       DBG_LVL(2, "Storing %" FMT_WordX " into base[%d]\n",
-	      vals[ref], reg);
+              vals[ref], reg);
       if (IR(ref)->o == IR_KBASEO) {
         WRITE_STACK(base, reg + 1, (Word)(realbase + IR(ref)->i));
-        //	base[reg + 1] = 
+        //      base[reg + 1] =
       } else {
         WRITE_STACK(base, reg + 1, vals[ref]);
       }
@@ -470,7 +470,7 @@ irEngine(Capability *cap, Fragment *F)
     //    sayonara("Need to treat KBASEO differently!");
 
     DBG_LVL(2, "base goes from %p to %p (delta: %d), top = %p (%d)\n",
-	    old_base + 1, base + 1, baseslot - 1, T->top, nslots );
+            old_base + 1, base + 1, baseslot - 1, T->top, nslots );
     IF_DBG_LVL(2, printFrame(stderr, old_base + 1, T->top));
     //if (--countdown == 0) sayonara("Testing");
   }
@@ -541,7 +541,7 @@ findSnapShot(Fragment *F, IRRef pcref)
 
 int
 restoreStack(Fragment *F, Word *base, Word *vals, Word *hp, Word *hplim,
-	     IRRef pcref, Thread *T) {
+             IRRef pcref, Thread *T) {
       int i;
     SnapShot *snap = 0;
     SnapEntry *se;
@@ -586,7 +586,7 @@ restoreStack(Fragment *F, Word *base, Word *vals, Word *hp, Word *hplim,
       //DBG_PR("0x%" FMT_WordX "\n", base[s]);
     }
     DBG_PR("Base slot: %d\n", se[1]);
-    //    se[1] = 
+    //    se[1] =
     T->pc = (BCIns *)F->startpc + (int)se[0];
     T->base = base + (int)se[1];
     T->top = base + snap->minslot + snap->nslots;
@@ -652,7 +652,7 @@ verifyStackWithSnapshot(Fragment *F, Word *vals, IRRef pcref, Word *base,
   DBG_LVL(2, " - verifying base: JIT: %p == Interp: %p?\n",
           base + getSnapshotBaseSlot(F, snap), interp_base);
 
-  /* 1. Verify actual stack contents against contents of "registers", i.e., 
+  /* 1. Verify actual stack contents against contents of "registers", i.e.,
         local variables of the trace.
    */
   se = F->snapmap + snap->mapofs;
@@ -662,7 +662,7 @@ verifyStackWithSnapshot(Fragment *F, Word *vals, IRRef pcref, Word *base,
     IRRef ref = snap_ref(*se);
     verifySlot(F, vals, ref, base, slot);
   }
- 
+
   /* 2. Verify contents of shadow stack and shadow heap against real
         stack and real heap. */
   bool res = verifyShadowStack() && verifyShadowHeap();

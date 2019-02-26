@@ -27,7 +27,7 @@ public:
 
   // Points past last free byte.
   inline char *end() const { return end_; }
-  
+
   // Size of block in bytes.
   inline size_t size() const { return (size_t)(end() - start()); }
 
@@ -83,7 +83,7 @@ private:
   friend class MemoryManager;
   Block() {}; // Hidden
   ~Block() {};
-  
+
   inline void setFlag(Flags flag) { flags_ |= (uint32_t)flag; }
   inline void clearFlag(Flags flag) { flags_ &= ~((uint32_t)flag); }
   inline void markAsFree() {
@@ -110,7 +110,7 @@ class Region {
 public:
   typedef enum {
     kSmallObjectRegion = 1, // The region is subdivided into blocks.
-    kLargeObjectRegion	// The region contains large objects.
+    kLargeObjectRegion  // The region contains large objects.
   } RegionType;
 
   static const int kRegionSizeLog2 = 20; /* 1MB */

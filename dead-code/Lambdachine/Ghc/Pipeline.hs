@@ -53,9 +53,9 @@ compileToCore file = do
             -- liftIO $ putStrLn "Optimising ..."
             guts' <- hscSimplify guts
 
-            -- liftIO $ putStrLn "Translating to bytecode ..."            
+            -- liftIO $ putStrLn "Translating to bytecode ..."
             liftM Just (prepareCore mod_summary guts')
-    Nothing -> 
+    Nothing ->
       error $ "compileToCore: File not found in module graph: " ++ file
 
 compileSingle :: GhcMonad m => HscEnv -> ModSummary -> Bool
@@ -79,10 +79,10 @@ compileSingle hsc_env mod_summary _source_unchanged = do
         liftIO $ putStrLn "Optimising ..."
         guts' <- hscSimplify guts
 
-        liftIO $ putStrLn "Writing iface"        
+        liftIO $ putStrLn "Writing iface"
         (iface, changed, _details, cgguts) <- hscNormalIface guts' Nothing
         hscWriteIface iface changed mod_summary
-        
+
         let dflags = hsc_dflags hsc_env
             s_file = hscOutName dflags
         liftIO $ SysTools.touch dflags "Touching .s file" s_file
@@ -103,7 +103,7 @@ hscSimpleIface' tc_result = do
    -- And the answer is ...
    -- liftIO $ dumpIfaceStats hsc_env
    return (new_iface, no_change, details)
-    
+
 
 -- | Run simplifier and put Core into A-normal form.
 prepareCore :: GhcMonad m => ModSummary -> ModGuts
