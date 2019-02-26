@@ -1,0 +1,11 @@
+resolver: lts-2.22
+
+packages:
+  - '.'
+
+extra-deps:
+  - blaze-builder-0.3.3.4
+  - temporary-1.1.2.5
+  - graph-serialize-0.2
+  - utf8-string-0.3.8
+  - value-supply-0.6
