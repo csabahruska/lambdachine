@@ -9,31 +9,62 @@ Category:            Compiler
 Build-type:          Simple
 Cabal-version:       >=1.10
 
-Executable lcc
+library
+  hs-source-dirs:      compiler
+  default-language:    Haskell2010
+  exposed-modules:
+                       Lambdachine.Builtin
+                       Lambdachine.Ghc.StgToBytecode
+                       Lambdachine.Ghc.Utils
+                       Lambdachine.Grin.Analyse
+                       Lambdachine.Grin.Bytecode
+                       Lambdachine.Grin.RegAlloc
+                       Lambdachine.Grin.RegAllocLinearScan
+                       Lambdachine.Id
+                       Lambdachine.Name
+                       Lambdachine.Options
+                       Lambdachine.Serialise
+                       Lambdachine.Utils
+                       Lambdachine.Utils.Convert
+                       Lambdachine.Utils.Graph.Base
+                       Lambdachine.Utils.Graph.Colour
+                       Lambdachine.Utils.Graph.Ops
+                       Lambdachine.Utils.IO
+                       Lambdachine.Utils.Pretty
+                       Lambdachine.Utils.Unique
+
   Build-depends:    ghc             >= 7.6 && < 7.9
                   , base
-                  , filepath
-                  , process
-                  , directory
-                  , containers
-                  , ghc-paths       == 0.1.*
-                  , cmdargs         >= 0.6   && < 0.11
-                  , transformers    >= 0.3
-                  , mtl             == 2.*
-                  , blaze-builder   >= 0.2   && < 0.4
-                  , vector          >= 0.7   && < 0.11
-                  , utf8-string     == 0.3.*
                   , bytestring
+                  , containers
+                  , mtl             == 2.*
+                  , transformers    >= 0.3
                   , array
+                  , blaze-builder   >= 0.2   && < 0.4
+                  , utf8-string     == 0.3.*
+                  , cmdargs         >= 0.6   && < 0.11
+                  , vector          >= 0.7   && < 0.11
                   , ansi-wl-pprint  == 0.6.*
                   , binary          >= 0.5 && < 0.8
                   , uniplate        == 1.6.*
                   , hoopl           >= 3.9 && < 3.11
                   , value-supply    == 0.6.*
                   , graph-serialize >= 0.2
-                  , temporary       == 1.1.*
                   , deepseq         == 1.3.*
-  Hs-Source-Dirs:   compiler
+
+  Ghc-Options:    -Wall
+
+Executable lcc
+  Hs-Source-Dirs:   lcc
   Main-Is:          Main.hs
   Default-Language: Haskell2010
+  Build-depends:    ghc             >= 7.6 && < 7.9
+                  , lambdachine
+                  , base
+                  , filepath
+                  , containers
+                  , uniplate        == 1.6.*
+                  , directory
+                  , ghc-paths       == 0.1.*
+                  , temporary       == 1.1.*
   Ghc-Options:    -rtsopts -Wall
